@@ -49,16 +49,23 @@ android {
 
 dependencies {
 
+    // Kotlin
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.5.2'
+
     // AndroidX
     implementation "androidx.core:core-ktx:1.6.0"
     implementation "androidx.appcompat:appcompat:1.3.1"
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
     implementation 'androidx.activity:activity-compose:1.3.1'
+
+    // Android Lifecycle
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0-rc01"
 
     // Android Jetpack Compose
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
-    implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
+    // implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
 
     // Material Design
     implementation 'com.google.android.material:material:1.4.0'
@@ -67,6 +74,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:28.4.2')
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-auth-ktx'
+    implementation 'com.google.android.gms:play-services-auth:19.2.0'
 
     // Test
     testImplementation 'junit:junit:4.13.2'
