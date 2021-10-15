@@ -32,7 +32,10 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 @Composable
-fun LoginScreen(viewModel: LoginScreenViewModel = viewModel()) {
+fun LoginScreen(
+    onLoginSuccess: (String) -> Unit = {},
+    viewModel: LoginScreenViewModel = viewModel()
+) {
 
     var userEmail by remember { mutableStateOf("") }
     var userPassword by remember { mutableStateOf("") }
@@ -47,6 +50,7 @@ fun LoginScreen(viewModel: LoginScreenViewModel = viewModel()) {
             val account = task.getResult(ApiException::class.java)!!
             val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
             viewModel.signWithCredential(credential)
+            onLoginSuccess(account.id!!)
         } catch (e: ApiException) {
             Log.w("TAG", "Google sign in failed", e)
         }
@@ -183,6 +187,8 @@ fun LoginScreen(viewModel: LoginScreenViewModel = viewModel()) {
                     when(state.status) {
                         LoadingState.Status.SUCCESS -> {
                             Text(text = "Success")
+                            // onLogin()
+                            Log.d("Vince", "success yo")
                         }
                         LoadingState.Status.FAILED -> {
                             Text(text = state.msg ?: "Error")
