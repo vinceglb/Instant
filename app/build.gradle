@@ -37,7 +37,7 @@ android {
         useIR = true
     }
     kotlin.sourceSets.all {
-        languageSettings.useExperimentalAnnotation("kotlin.RequiresOptIn")
+        languageSettings.optIn("kotlin.RequiresOptIn")
     }
     buildFeatures {
         compose true
@@ -69,8 +69,9 @@ dependencies {
     // Android Lifecycle
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0-rc01"
 
-    // Android Jetpack Compose
+    // Android Compose
     implementation "androidx.compose.ui:ui:$compose_version"
+    implementation "androidx.compose.ui:ui-tooling:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
 
