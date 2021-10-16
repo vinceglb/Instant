@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 import android.util.Log
+import android.util.Size
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY
@@ -23,6 +24,7 @@ import com.ebf.instant.ui.Permission
 import com.ebf.instant.util.executor
 import com.ebf.instant.util.getCameraProvider
 import com.ebf.instant.util.takePicture
+import id.zelory.compressor.Compressor
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -62,6 +64,7 @@ fun CameraCapture(
                 mutableStateOf(
                     ImageCapture.Builder()
                         .setCaptureMode(CAPTURE_MODE_MINIMIZE_LATENCY)
+                        .setTargetResolution(Size(480, 640))
                         .build()
                 )
             }
@@ -80,7 +83,8 @@ fun CameraCapture(
                     onClick = {
                         coroutineScope.launch {
                             imageCaptureUseCase.takePicture(context.executor).let {
-                                onImageFile(it)
+                                val compressedImageFile = Compressor.compress(context = context, imageFile = it)
+                                onImageFile(compressedImageFile)
                             }
                         }
                     }

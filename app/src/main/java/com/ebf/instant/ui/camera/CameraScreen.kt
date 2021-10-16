@@ -17,13 +17,17 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import coil.compose.rememberImagePainter
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.component1
 import com.google.firebase.storage.ktx.component2
 import com.google.firebase.storage.ktx.storage
 
 @Composable
-fun CameraScreen(modifier: Modifier = Modifier) {
+fun CameraScreen(
+    modifier: Modifier = Modifier,
+    onPostUploaded: () -> Unit = {}
+) {
     var imageUri by remember { mutableStateOf(EMPTY_IMAGE_URI) }
     if (imageUri != EMPTY_IMAGE_URI) {
         Box(modifier = modifier) {
@@ -40,15 +44,47 @@ fun CameraScreen(modifier: Modifier = Modifier) {
 
                 Button(onClick = {
 
+                    val user = Firebase.auth.currentUser!!
+
                     val storage = Firebase.storage
                     val storageRef = storage.reference
-                    val vinceImage = storageRef.child("user/${Firebase.auth.currentUser!!.uid}/${imageUri.lastPathSegment}")
+                    val vinceImage = storageRef.child("user/${user.uid}/${imageUri.lastPathSegment}")
                     val uploadTask = vinceImage.putFile(imageUri)
 
                     uploadTask.addOnProgressListener { (bytesTransferred, totalByteCount) ->
                         progress = (bytesTransferred * 1f) / totalByteCount
                         Log.d("Vince", "$progress")
+                    }.continueWithTask { task ->
+                        if (!task.isSuccessful) {
+                            task.exception?.let {
+                                throw it
+                            }
+                        }
+                        vinceImage.downloadUrl
+                    }.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val downloadUri = task.result
+
+                            val db = Firebase.firestore
+                            val post = hashMapOf(
+                                "urlImage" to downloadUri.toString(),
+                                "user" to user.displayName
+                            )
+
+                            db.collection("posts").add(post).addOnSuccessListener {
+                                Log.d("Vince", "ok")
+                                onPostUploaded()
+                            }.addOnFailureListener {
+                                Log.e("Vince", "erreur", it)
+                            }
+
+                        } else {
+                            // Handle failures TODO
+                            // ...
+                        }
                     }
+
+
 
                 }) {
                     Text(text = "Upload 🚀")

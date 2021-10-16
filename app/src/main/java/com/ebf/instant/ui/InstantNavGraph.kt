@@ -1,6 +1,5 @@
 package com.ebf.instant.ui
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -8,32 +7,30 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ebf.instant.ui.camera.CameraScreen
-import com.ebf.instant.ui.login.LoginScreen
+import com.ebf.instant.ui.post.FeedScreen
 
 object MainDestinations {
-    const val LOGIN = "login"
+    const val FEED = "feed"
     const val CAMERA = "camera"
 }
 
 @Composable
 fun InstantNavGraph(
+    modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = MainDestinations.LOGIN
+    startDestination: String = MainDestinations.FEED
 ) {
     NavHost(
         navController = navController,
-        startDestination = startDestination
+        startDestination = startDestination,
+        modifier = modifier
     ) {
-        composable(MainDestinations.LOGIN) {
-            LoginScreen(
-                onLoginSuccess = {
-                    navController.navigate(MainDestinations.CAMERA)
-                }
-            )
+        composable(MainDestinations.FEED) {
+            FeedScreen()
         }
 
         composable(MainDestinations.CAMERA) {
-            CameraScreen(Modifier.fillMaxSize())
+            CameraScreen(onPostUploaded = { navController.navigate(MainDestinations.FEED) })
         }
     }
 }
