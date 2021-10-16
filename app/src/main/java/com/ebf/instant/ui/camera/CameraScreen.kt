@@ -16,17 +16,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import coil.compose.rememberImagePainter
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.component1
 import com.google.firebase.storage.ktx.component2
-import com.google.firebase.storage.ktx.storage
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun CameraScreen(
     modifier: Modifier = Modifier,
-    onPostUploaded: () -> Unit = {}
+    viewModel: CameraScreenViewModel = getViewModel(),
+    onPostUploaded: () -> Unit = {},
 ) {
     var imageUri by remember { mutableStateOf(EMPTY_IMAGE_URI) }
     if (imageUri != EMPTY_IMAGE_URI) {
@@ -43,49 +41,12 @@ fun CameraScreen(
                 LinearProgressIndicator(progress = progress)
 
                 Button(onClick = {
-
-                    val user = Firebase.auth.currentUser!!
-
-                    val storage = Firebase.storage
-                    val storageRef = storage.reference
-                    val vinceImage = storageRef.child("user/${user.uid}/${imageUri.lastPathSegment}")
-                    val uploadTask = vinceImage.putFile(imageUri)
-
-                    uploadTask.addOnProgressListener { (bytesTransferred, totalByteCount) ->
-                        progress = (bytesTransferred * 1f) / totalByteCount
-                        Log.d("Vince", "$progress")
-                    }.continueWithTask { task ->
-                        if (!task.isSuccessful) {
-                            task.exception?.let {
-                                throw it
-                            }
-                        }
-                        vinceImage.downloadUrl
-                    }.addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            val downloadUri = task.result
-
-                            val db = Firebase.firestore
-                            val post = hashMapOf(
-                                "urlImage" to downloadUri.toString(),
-                                "user" to user.displayName
-                            )
-
-                            db.collection("posts").add(post).addOnSuccessListener {
-                                Log.d("Vince", "ok")
-                                onPostUploaded()
-                            }.addOnFailureListener {
-                                Log.e("Vince", "erreur", it)
-                            }
-
-                        } else {
-                            // Handle failures TODO
-                            // ...
-                        }
-                    }
-
-
-
+                    publishPost(
+                        viewModel = viewModel,
+                        imageUri = imageUri,
+                        onPostUploaded = onPostUploaded,
+                        setProgress = { progress = it }
+                    )
                 }) {
                     Text(text = "Upload 🚀")
                 }
@@ -124,6 +85,44 @@ fun CameraScreen(
                     Text("Select from Gallery")
                 }
             }
+        }
+    }
+}
+
+fun publishPost(
+    viewModel: CameraScreenViewModel,
+    imageUri: Uri,
+    onPostUploaded: () -> Unit,
+    setProgress: (Float) -> Unit
+) {
+    // Upload post image to Firebase Storage
+    val uploadState = viewModel.uploadImage(imageUri)
+
+    // Display progress
+    uploadState.task.addOnProgressListener { (bytesTransferred, totalByteCount) ->
+        setProgress((bytesTransferred * 1f) / totalByteCount)
+    }
+
+    // Get image url
+    uploadState.task.continueWithTask { task ->
+        if (!task.isSuccessful) {
+            task.exception?.let {
+                throw it
+            }
+        }
+        uploadState.reference.downloadUrl
+    }.addOnCompleteListener { task ->
+        if (task.isSuccessful) {
+            // The image url
+            val downloadUri = task.result
+
+            // Publish
+            viewModel.publishPost(downloadUri.toString()) {
+                onPostUploaded()
+            }
+        } else {
+            // Handle failures TODO
+            Log.e("CameraScreen", "Error", task.exception)
         }
     }
 }

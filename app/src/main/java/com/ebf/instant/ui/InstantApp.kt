@@ -25,15 +25,12 @@ fun Auth() {
     if (userId.isEmpty()) {
         LoginScreen(onLoginSuccess = { uid -> userId = uid })
     } else {
-        Yop()
-
-        // FeedScreen()
-        // CameraScreen()
+        AppContainer()
     }
 }
 
 @Composable
-fun Yop() {
+fun AppContainer() {
     val navController = rememberNavController()
 
     Scaffold(

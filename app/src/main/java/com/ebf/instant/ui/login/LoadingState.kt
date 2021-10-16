@@ -1,6 +1,6 @@
-package com.ebf.instant.util
+package com.ebf.instant.ui.login
 
-data class LoadingState private constructor(val status: Status, val msg: String? = null) {
+data class LoadingState constructor(val status: Status, val msg: String? = null) {
     companion object {
         val LOADED = LoadingState(Status.SUCCESS)
         val IDLE = LoadingState(Status.IDLE)

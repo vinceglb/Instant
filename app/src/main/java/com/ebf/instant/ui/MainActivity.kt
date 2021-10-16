@@ -1,9 +1,8 @@
-package com.ebf.instant
+package com.ebf.instant.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.ebf.instant.ui.InstantApp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,6 +1,7 @@
 package com.ebf.instant.remote
 
 import com.ebf.instant.model.Post
+import com.ebf.instant.model.PostToPublish
 import com.ebf.instant.model.User
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -8,10 +9,18 @@ import kotlinx.coroutines.tasks.await
 import java.time.ZonedDateTime
 
 interface PostDataSource {
+    suspend fun publishPost(postToPublish: PostToPublish)
     suspend fun getAllPosts(): List<Post>
 }
 
 class FirestorePostDataSource(private val firestore: FirebaseFirestore) : PostDataSource {
+
+    override suspend fun publishPost(postToPublish: PostToPublish) {
+        firestore
+            .collection("posts")
+            .add(postToPublish)
+            .await()
+    }
 
     override suspend fun getAllPosts(): List<Post> {
         val snapshot = firestore
