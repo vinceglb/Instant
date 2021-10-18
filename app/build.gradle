@@ -9,7 +9,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.ebf.instant"
+        applicationId "com.ebfstudio.instant"
         minSdk 21
         targetSdk 31
         versionCode 1
