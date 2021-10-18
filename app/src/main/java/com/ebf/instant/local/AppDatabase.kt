@@ -5,15 +5,18 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.ebf.instant.local.converter.ZonedDateTimeConverter
+import com.ebf.instant.local.converter.DateConverter
 import com.ebf.instant.local.dao.PostDao
+import com.ebf.instant.local.dao.UserDao
 import com.ebf.instant.model.Post
+import com.ebf.instant.model.User
 
-@Database(entities = [Post::class], version = 1)
-@TypeConverters(ZonedDateTimeConverter::class)
+@Database(entities = [Post::class, User::class], version = 1)
+@TypeConverters(DateConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun postDao(): PostDao
+    abstract fun userDao(): UserDao
 
     companion object {
 

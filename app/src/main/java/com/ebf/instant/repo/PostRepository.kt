@@ -7,6 +7,7 @@ import com.ebf.instant.model.PostToPublish
 import com.ebf.instant.remote.PostDataSource
 import com.ebf.instant.remote.StorageDataSource
 import com.ebf.instant.remote.StorageDataSource.StorageUploadState
+import com.ebf.instant.remote.UserDataSource
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
@@ -14,7 +15,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 
 class PostRepository(
-    private val firestoreDataSource: PostDataSource,
+    private val postDataSource: PostDataSource,
+    private val userDataSource: UserDataSource,
     private val storageDataSource: StorageDataSource,
     private val postDao: PostDao,
     private val auth: FirebaseAuth
@@ -26,7 +28,7 @@ class PostRepository(
         emit(listFromCache)
 
         // Second, fetch posts from internet
-        val listFromNetwork = firestoreDataSource.getAllPosts()
+        val listFromNetwork = postDataSource.getAllPosts()
         postDao.insertList(listFromNetwork)
 
         // Third, observe the database, the unique source of true
@@ -34,11 +36,16 @@ class PostRepository(
     }
 
     suspend fun publishPost(urlImage: String) {
+        // Get the user info
+        val uid = auth.currentUser?.uid ?: throw IllegalStateException("The user must be log in")
+        val user = userDataSource.getUserById(uid)
+
+        //  Publish the post
         val postToPublish = PostToPublish(
-            urlImage = urlImage,
-            user = auth.currentUser?.displayName ?: "Error"
+            imageUrl = urlImage,
+            user = user
         )
-        firestoreDataSource.publishPost(postToPublish = postToPublish)
+        postDataSource.publishPost(postToPublish = postToPublish)
     }
 
     fun uploadImage(imageUri: Uri): StorageUploadState =

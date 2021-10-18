@@ -1,6 +1,5 @@
 package com.ebf.instant.ui.login
 
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -18,17 +17,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ebf.instant.R
-import com.ebf.instant.ui.theme.InstantTheme
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import timber.log.Timber
 
 @Composable
 fun LoginScreen(
@@ -51,7 +49,7 @@ fun LoginScreen(
             viewModel.signWithCredential(credential)
             onLoginSuccess(account.id!!)
         } catch (e: ApiException) {
-            Log.w("TAG", "Google sign in failed", e)
+            Timber.w(e, "Google sign in failed")
         }
     }
 
@@ -127,7 +125,7 @@ fun LoginScreen(
                             Text(text = "Login")
                         },
                         onClick = {
-                            viewModel.signInWithEmailAndPassword(userEmail.trim(), userPassword.trim())
+                            // viewModel.signInWithEmailAndPassword(userEmail.trim(), userPassword.trim())
                         }
                     )
 
@@ -186,8 +184,6 @@ fun LoginScreen(
                     when(state.status) {
                         LoadingState.Status.SUCCESS -> {
                             Text(text = "Success")
-                            // onLogin()
-                            Log.d("Vince", "success yo")
                         }
                         LoadingState.Status.FAILED -> {
                             Text(text = state.msg ?: "Error")
@@ -200,11 +196,11 @@ fun LoginScreen(
     )
 }
 
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    val viewModel = LoginScreenViewModel()
-    InstantTheme(false) {
-        LoginScreen(viewModel = viewModel)
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun LoginScreenPreview() {
+//    val viewModel = LoginScreenViewModel()
+//    InstantTheme(false) {
+//        LoginScreen(viewModel = viewModel)
+//    }
+//}

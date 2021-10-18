@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
@@ -20,7 +19,7 @@ import com.ebf.instant.R
 import com.ebf.instant.model.Post
 import com.ebf.instant.model.User
 import com.ebf.instant.ui.theme.InstantTheme
-import java.time.ZonedDateTime
+import java.util.*
 
 @Composable
 fun PostCard(
@@ -43,7 +42,7 @@ fun PostCard(
                 .padding(top = 8.dp, bottom = 4.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.profile_pitcure),
+                painter = rememberImagePainter(data = post.user.imageUrl),
                 contentDescription = "Image de profile",
                 modifier = Modifier
                     .size(30.dp)
@@ -82,9 +81,9 @@ fun PostCard(
 fun PostCardPreview() {
     val post = Post(
         id = "test",
-        user = User(id = "test", username = "Vincent"),
+        user = User(id = "test", username = "vince.app", name = "Vincent", ""),
         imageUrl = "url",
-        date = ZonedDateTime.now()
+        date = Date()
     )
     InstantTheme {
         PostCard(post = post, placeholder = true)

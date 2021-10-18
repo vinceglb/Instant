@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Instant</string>
+    <string name="app_name" translatable="false">Instant</string>
+    <string name="welcome_subtitle">Be yourself, no filter. Share your daily life and be part of the community.</string>
 </resources>

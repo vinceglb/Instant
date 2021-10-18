@@ -4,13 +4,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Camera
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.ebf.instant.ui.login.LoginScreen
+import com.ebf.instant.ui.onboarding.WelcomeScreen
 import com.ebf.instant.ui.theme.InstantTheme
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 
 @Composable
 fun InstantApp() {
@@ -21,12 +19,13 @@ fun InstantApp() {
 
 @Composable
 fun Auth() {
-    var userId by remember { mutableStateOf(Firebase.auth.currentUser?.uid ?: "") }
-    if (userId.isEmpty()) {
-        LoginScreen(onLoginSuccess = { uid -> userId = uid })
-    } else {
-        AppContainer()
-    }
+    // var userId by remember { mutableStateOf(Firebase.auth.currentUser?.uid ?: "") }
+    // if (userId.isEmpty()) {
+        // LoginScreen(onLoginSuccess = { uid -> userId = uid })
+        WelcomeScreen()
+//    } else {
+//        AppContainer()
+//    }
 }
 
 @Composable
