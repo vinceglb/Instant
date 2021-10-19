@@ -1,6 +1,7 @@
 package com.ebf.instant.remote
 
 import com.ebf.instant.model.Post
+import com.ebf.instant.model.PostEntity
 import com.ebf.instant.model.PostToPublish
 import com.ebf.instant.model.User
 import com.google.firebase.Timestamp
@@ -42,9 +43,12 @@ class FirestorePostDataSource(private val firestore: FirebaseFirestore) : PostDa
     }
 
     private fun parsePostItem(snapshot: DocumentSnapshot): Post = Post(
-        id = snapshot.id,
-        date = (snapshot[TIMESTAMP] as? Timestamp ?: Timestamp.now()).toDate(),
-        imageUrl = snapshot[IMAGE_URL] as? String ?: "",
+        post = PostEntity(
+            id = snapshot.id,
+            date = (snapshot[TIMESTAMP] as? Timestamp ?: Timestamp.now()).toDate(),
+            imageUrl = snapshot[IMAGE_URL] as? String ?: "",
+            userId = snapshot["$USER.$USER_ID"] as? String ?: ""
+        ),
         user = User(
             id = snapshot["$USER.$USER_ID"] as? String ?: "",
             username = snapshot["$USER.$USER_USERNAME"] as? String ?: "",
