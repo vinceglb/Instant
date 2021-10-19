@@ -30,7 +30,7 @@ val appModule = module {
     single { StorageDataSource(get(), get(), androidContext()) }
 
     // Repositories
-    single { PostRepository(get(), get(), get(), get(), get()) }
+    single { PostRepository(get(), get(), get(), get(), get(), get()) }
     single { UserRepository(get()) }
 
     // Room db

@@ -33,6 +33,7 @@ import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import com.ebf.instant.R
 import com.ebf.instant.model.Post
+import com.ebf.instant.model.PostEntity
 import com.ebf.instant.model.User
 import com.ebf.instant.ui.theme.InstantTheme
 import java.util.*
@@ -155,7 +156,7 @@ fun PostCardImage(post: Post, isLiked: Boolean, preview: Boolean, onDoubleTap: (
         Box(contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
             Image(
-                painter = painter(post.imageUrl, R.drawable.post_image_example, preview = preview),
+                painter = painter(post.post.imageUrl, R.drawable.post_image_example, preview = preview),
                 contentDescription = "Image du post",
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
@@ -232,10 +233,13 @@ fun painter(url: String, @DrawableRes tool: Int, preview: Boolean): ImagePainter
 @Composable
 fun PostCardPreview() {
     val post = Post(
-        id = "test",
+        post = PostEntity(
+            id = "test",
+            imageUrl = "",
+            date = Date(),
+            userId = "test"
+        ),
         user = User(id = "test", username = "vince.app", name = "Vincent", ""),
-        imageUrl = "",
-        date = Date()
     )
     InstantTheme {
         PostCard(post = post, preview = true)

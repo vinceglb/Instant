@@ -8,10 +8,10 @@ import androidx.room.TypeConverters
 import com.ebf.instant.local.converter.DateConverter
 import com.ebf.instant.local.dao.PostDao
 import com.ebf.instant.local.dao.UserDao
-import com.ebf.instant.model.Post
+import com.ebf.instant.model.PostEntity
 import com.ebf.instant.model.User
 
-@Database(entities = [Post::class, User::class], version = 1)
+@Database(entities = [PostEntity::class, User::class], version = 1)
 @TypeConverters(DateConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 

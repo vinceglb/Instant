@@ -2,6 +2,7 @@ package com.ebf.instant.repo
 
 import android.net.Uri
 import com.ebf.instant.local.dao.PostDao
+import com.ebf.instant.local.dao.UserDao
 import com.ebf.instant.model.Post
 import com.ebf.instant.model.PostToPublish
 import com.ebf.instant.remote.PostDataSource
@@ -18,6 +19,7 @@ class PostRepository(
     private val postDataSource: PostDataSource,
     private val userDataSource: UserDataSource,
     private val storageDataSource: StorageDataSource,
+    private val userDao: UserDao,
     private val postDao: PostDao,
     private val auth: FirebaseAuth
 ) {
@@ -29,7 +31,10 @@ class PostRepository(
 
         // Second, fetch posts from internet
         val listFromNetwork = postDataSource.getAllPosts()
-        postDao.insertList(listFromNetwork)
+        listFromNetwork.forEach {
+            userDao.insert(it.user)
+            postDao.insert(it.post)
+        }
 
         // Third, observe the database, the unique source of true
         emitAll(postDao.loadAll())
