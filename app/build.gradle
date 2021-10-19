@@ -98,6 +98,7 @@ dependencies {
     // Accompanist
     def accompanist_version = "0.20.0"
     implementation "com.google.accompanist:accompanist-permissions:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
     implementation "com.google.accompanist:accompanist-placeholder-material:$accompanist_version"
 
     // Other libs
