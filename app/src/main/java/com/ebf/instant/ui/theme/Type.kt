@@ -36,5 +36,5 @@ val Typography = Typography(
     h5 = TextStyle(
         fontFamily = AbrilFatface,
         fontSize = 24.sp
-    )
+    ),
 )

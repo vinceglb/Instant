@@ -2,10 +2,11 @@ package com.ebf.instant.ui.post
 
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -18,6 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -35,75 +37,53 @@ import com.ebf.instant.model.User
 import com.ebf.instant.ui.theme.InstantTheme
 import java.util.*
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
+enum class BounceState { Pressed, Released }
+
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PostCard(
     post: Post,
     preview: Boolean = false
 ) {
-    @Composable
-    fun painter(url: String, @DrawableRes tool: Int): ImagePainter =
-        rememberImagePainter(
-            data = url,
-            builder = {
-                crossfade(true)
-                if (preview) placeholder(tool)
-            }
-        )
 
     var isLiked by remember { mutableStateOf(false) }
-    val cardElevation by animateDpAsState(targetValue = if (isLiked) 8.dp else 0.dp)
 
     Column(
         modifier = Modifier
-            .padding(horizontal = 4.dp, vertical = 12.dp)
+            .padding(horizontal = 8.dp, vertical = 12.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically,) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
-                painter = painter(url = post.user.imageUrl, tool = R.drawable.profile_pitcure),
+                painter = painter(url = post.user.imageUrl, tool = R.drawable.profile_pitcure, preview = preview),
                 contentDescription = "Image de profile",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(30.dp)
+                    .size(50.dp)
                     .clip(CircleShape)
             )
 
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(16.dp))
 
-            Text(text = post.user.username, style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.Bold))
+            Column {
+                Text(
+                    text = post.user.username,
+                    style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.Bold)
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = "Il y a 18 minutes",
+                    style = MaterialTheme.typography.caption,
+                )
+            }
         }
 
         Text(
             text = "Aujourd'hui, on a fait une super sortie en forêt et c'était top !",
             style = MaterialTheme.typography.body1,
-            modifier = Modifier.padding(vertical = 8.dp)
+            modifier = Modifier.padding(vertical = 16.dp)
         )
 
-        Card(
-            shape = MaterialTheme.shapes.medium,
-            elevation = cardElevation,
-            modifier = Modifier
-                .pointerInput(Unit) {
-                    detectTapGestures(
-                        onDoubleTap = {
-                            isLiked = !isLiked
-
-                        }
-                    )
-                }
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-                Image(
-                    painter = painter(url = post.imageUrl, tool = R.drawable.post_image_example),
-                    contentDescription = "Image du post",
-                    contentScale = ContentScale.FillWidth,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = 20.dp, max = 500.dp)
-                )
-            }
-        }
+        PostCardImage(post = post, isLiked = isLiked, preview = preview) { isLiked = !isLiked }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             // Like
@@ -116,17 +96,8 @@ fun PostCard(
 
             Spacer(modifier = Modifier.weight(1f))
 
-//            Text(text = "14 Likes", modifier = Modifier.padding(end = 8.dp))
-            Box {
-                Image(
-                    painter = painterResource(id = R.drawable.profile_pitcure),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clip(CircleShape)
-                        .border(width = 4.dp, MaterialTheme.colors.surface, shape = CircleShape)
-                )
-            }
+            // Profile picture images to represent likes
+            ProfilesLikes()
         }
 
         Surface(
@@ -152,12 +123,46 @@ fun PostCard(
             }
         }
 
-        Text(
-            text = "Il y a 18 minutes",
-            style = MaterialTheme.typography.overline,
-            modifier = Modifier.padding(top = 8.dp)
-        )
+    }
+}
 
+@Composable
+fun PostCardImage(post: Post, isLiked: Boolean, preview: Boolean, onDoubleTap: () -> Unit) {
+    var currentState: BounceState by remember { mutableStateOf(BounceState.Released) }
+
+    val scale by animateFloatAsState(
+        targetValue = if (currentState == BounceState.Pressed) 1.03f else 1f,
+        finishedListener = { currentState = BounceState.Released },
+        animationSpec = spring(dampingRatio = if (currentState == BounceState.Released) Spring.DampingRatioMediumBouncy else Spring.DampingRatioNoBouncy)
+    )
+
+    val cardElevation by animateDpAsState(targetValue = if (isLiked) 8.dp else 0.dp)
+
+    Card(
+        shape = MaterialTheme.shapes.medium,
+        elevation = cardElevation,
+        modifier = Modifier
+            .scale(scale)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onDoubleTap = {
+                        onDoubleTap()
+                        currentState = BounceState.Pressed
+                    }
+                )
+            }
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+            Image(
+                painter = painter(post.imageUrl, R.drawable.post_image_example, preview = preview),
+                contentDescription = "Image du post",
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 20.dp, max = 500.dp)
+            )
+        }
     }
 }
 
@@ -179,6 +184,49 @@ fun LikeButton(isLiked: Boolean, onClick: () -> Unit) {
         }
     }
 }
+
+@Composable
+fun ProfilesLikes() {
+    Box {
+        ProfileLikeIcon(R.drawable.profile_pitcure)
+        Row {
+            Spacer(modifier = Modifier.width(18.dp))
+            ProfileLikeIcon(R.drawable.profile_pitcure)
+        }
+    }
+}
+
+@Composable
+fun ProfileLikeIcon(
+    @DrawableRes profileImage: Int,
+    modifier: Modifier = Modifier
+) {
+    Box(contentAlignment = Alignment.Center, modifier = modifier) {
+        Surface(
+            shape = CircleShape,
+            color = MaterialTheme.colors.surface,
+            modifier = Modifier.size(28.dp),
+            content = {}
+        )
+        Image(
+            painter = painterResource(id = profileImage),
+            contentDescription = null,
+            modifier = Modifier
+                .size(22.dp)
+                .clip(CircleShape)
+        )
+    }
+}
+
+@Composable
+fun painter(url: String, @DrawableRes tool: Int, preview: Boolean): ImagePainter =
+    rememberImagePainter(
+        data = url,
+        builder = {
+            crossfade(true)
+            if (preview) placeholder(tool)
+        }
+    )
 
 @Preview(showBackground = true)
 @Composable
