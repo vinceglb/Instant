@@ -1,7 +1,7 @@
 package com.ebf.instant.remote
 
+import com.ebf.instant.model.PostWithUser
 import com.ebf.instant.model.Post
-import com.ebf.instant.model.PostEntity
 import com.ebf.instant.model.PostToPublish
 import com.ebf.instant.model.User
 import com.google.firebase.Timestamp
@@ -11,7 +11,7 @@ import kotlinx.coroutines.tasks.await
 
 interface PostDataSource {
     suspend fun publishPost(postToPublish: PostToPublish)
-    suspend fun getAllPosts(): List<Post>
+    suspend fun getAllPosts(): List<PostWithUser>
 }
 
 class FirestorePostDataSource(private val firestore: FirebaseFirestore) : PostDataSource {
@@ -34,7 +34,7 @@ class FirestorePostDataSource(private val firestore: FirebaseFirestore) : PostDa
             .await()
     }
 
-    override suspend fun getAllPosts(): List<Post> {
+    override suspend fun getAllPosts(): List<PostWithUser> {
         val snapshot = firestore
             .collection("posts")
             .get()
@@ -42,8 +42,8 @@ class FirestorePostDataSource(private val firestore: FirebaseFirestore) : PostDa
         return snapshot.documents.map { parsePostItem(it) }
     }
 
-    private fun parsePostItem(snapshot: DocumentSnapshot): Post = Post(
-        post = PostEntity(
+    private fun parsePostItem(snapshot: DocumentSnapshot): PostWithUser = PostWithUser(
+        post = Post(
             id = snapshot.id,
             date = (snapshot[TIMESTAMP] as? Timestamp ?: Timestamp.now()).toDate(),
             imageUrl = snapshot[IMAGE_URL] as? String ?: "",

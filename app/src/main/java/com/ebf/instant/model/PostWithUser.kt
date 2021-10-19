@@ -7,7 +7,7 @@ import androidx.room.Relation
 import java.util.*
 
 @Entity
-data class PostEntity(
+data class Post(
     @PrimaryKey
     val id: String,
     val imageUrl: String,
@@ -16,8 +16,8 @@ data class PostEntity(
     // val comments: List<String>
 )
 
-data class Post(
-    @Embedded val post: PostEntity,
+data class PostWithUser(
+    @Embedded val post: Post,
     @Relation(
         parentColumn = "userId",
         entityColumn = "id"

@@ -3,7 +3,7 @@ package com.ebf.instant.repo
 import android.net.Uri
 import com.ebf.instant.local.dao.PostDao
 import com.ebf.instant.local.dao.UserDao
-import com.ebf.instant.model.Post
+import com.ebf.instant.model.PostWithUser
 import com.ebf.instant.model.PostToPublish
 import com.ebf.instant.remote.PostDataSource
 import com.ebf.instant.remote.StorageDataSource
@@ -24,7 +24,7 @@ class PostRepository(
     private val auth: FirebaseAuth
 ) {
 
-    fun getAllPosts(): Flow<List<Post>> = flow {
+    fun getAllPosts(): Flow<List<PostWithUser>> = flow {
         // First, get posts from cache
         val listFromCache = postDao.loadAll().first()
         emit(listFromCache)

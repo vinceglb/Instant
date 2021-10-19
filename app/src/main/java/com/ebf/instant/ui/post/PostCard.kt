@@ -32,8 +32,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import com.ebf.instant.R
+import com.ebf.instant.model.PostWithUser
 import com.ebf.instant.model.Post
-import com.ebf.instant.model.PostEntity
 import com.ebf.instant.model.User
 import com.ebf.instant.ui.theme.InstantTheme
 import java.util.*
@@ -43,7 +43,7 @@ enum class BounceState { Pressed, Released }
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PostCard(
-    post: Post,
+    postWithUser: PostWithUser,
     preview: Boolean = false
 ) {
 
@@ -55,7 +55,7 @@ fun PostCard(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
-                painter = painter(url = post.user.imageUrl, tool = R.drawable.profile_pitcure, preview = preview),
+                painter = painter(url = postWithUser.user.imageUrl, tool = R.drawable.profile_pitcure, preview = preview),
                 contentDescription = "Image de profile",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -67,7 +67,7 @@ fun PostCard(
 
             Column {
                 Text(
-                    text = post.user.username,
+                    text = postWithUser.user.username,
                     style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.Bold)
                 )
                 Spacer(modifier = Modifier.height(2.dp))
@@ -84,7 +84,7 @@ fun PostCard(
             modifier = Modifier.padding(vertical = 16.dp)
         )
 
-        PostCardImage(post = post, isLiked = isLiked, preview = preview) { isLiked = !isLiked }
+        PostCardImage(postWithUser = postWithUser, isLiked = isLiked, preview = preview) { isLiked = !isLiked }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             // Like
@@ -128,7 +128,7 @@ fun PostCard(
 }
 
 @Composable
-fun PostCardImage(post: Post, isLiked: Boolean, preview: Boolean, onDoubleTap: () -> Unit) {
+fun PostCardImage(postWithUser: PostWithUser, isLiked: Boolean, preview: Boolean, onDoubleTap: () -> Unit) {
     var currentState: BounceState by remember { mutableStateOf(BounceState.Released) }
 
     val scale by animateFloatAsState(
@@ -156,7 +156,7 @@ fun PostCardImage(post: Post, isLiked: Boolean, preview: Boolean, onDoubleTap: (
         Box(contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
             Image(
-                painter = painter(post.post.imageUrl, R.drawable.post_image_example, preview = preview),
+                painter = painter(postWithUser.post.imageUrl, R.drawable.post_image_example, preview = preview),
                 contentDescription = "Image du post",
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
@@ -232,8 +232,8 @@ fun painter(url: String, @DrawableRes tool: Int, preview: Boolean): ImagePainter
 @Preview(showBackground = true)
 @Composable
 fun PostCardPreview() {
-    val post = Post(
-        post = PostEntity(
+    val post = PostWithUser(
+        post = Post(
             id = "test",
             imageUrl = "",
             date = Date(),
@@ -242,6 +242,6 @@ fun PostCardPreview() {
         user = User(id = "test", username = "vince.app", name = "Vincent", ""),
     )
     InstantTheme {
-        PostCard(post = post, preview = true)
+        PostCard(postWithUser = post, preview = true)
     }
 }
