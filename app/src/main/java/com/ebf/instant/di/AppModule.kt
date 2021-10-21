@@ -10,6 +10,7 @@ import com.ebf.instant.repo.UserRepository
 import com.ebf.instant.ui.camera.CameraScreenViewModel
 import com.ebf.instant.ui.login.LoginScreenViewModel
 import com.ebf.instant.ui.post.FeedScreenViewModel
+import com.ebf.instant.ui.post.comment.CommentScreenViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -30,13 +31,15 @@ val appModule = module {
     single { StorageDataSource(get(), get(), androidContext()) }
 
     // Repositories
-    single { PostRepository(get(), get(), get(), get(), get(), get()) }
+    single { PostRepository(get(), get(), get(), get(), get(), get(), get(), get()) }
     single { UserRepository(get()) }
 
     // Room db
     single { AppDatabase.init(androidContext()) }
     factory { get<AppDatabase>().postDao() }
     factory { get<AppDatabase>().userDao() }
+    factory { get<AppDatabase>().commentDao() }
+    factory { get<AppDatabase>().likeDao() }
 
     // Preferences DataStore
     factory { androidContext().dataStore }
@@ -46,4 +49,5 @@ val appModule = module {
     viewModel { FeedScreenViewModel(get()) }
     viewModel { CameraScreenViewModel(get()) }
     viewModel { LoginScreenViewModel(get(), get(), get()) }
+    viewModel { CommentScreenViewModel(get()) }
 }

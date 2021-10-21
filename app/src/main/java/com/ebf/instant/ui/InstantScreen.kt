@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddBox
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.QuestionAnswer
 import androidx.compose.ui.graphics.vector.ImageVector
 
 enum class InstantScreen(
@@ -22,6 +23,10 @@ enum class InstantScreen(
     Account(
         icon = Icons.Rounded.AccountCircle,
         label = "Account"
+    ),
+    Comments(
+        icon = Icons.Rounded.QuestionAnswer,
+        label = "Comments"
     );
 
     companion object {
@@ -30,6 +35,7 @@ enum class InstantScreen(
                 Feed.name -> Feed
                 Camera.name -> Camera
                 Account.name -> Account
+                Comments.name -> Comments
                 null -> Feed
                 else -> throw IllegalArgumentException("Route $route is not recognized.")
             }

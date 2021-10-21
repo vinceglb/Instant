@@ -1,8 +1,8 @@
 package com.ebf.instant.local.dao
 
 import androidx.room.*
-import com.ebf.instant.model.PostWithUser
 import com.ebf.instant.model.Post
+import com.ebf.instant.model.PostWithData
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -15,7 +15,7 @@ interface PostDao {
     suspend fun insertList(posts: List<Post>)
 
     @Transaction
-    @Query("SELECT * FROM Post")
-    fun loadAll(): Flow<List<PostWithUser>>
+    @Query("SELECT * FROM Post ORDER BY date DESC")
+    fun loadAll(): Flow<List<PostWithData>>
 
 }

@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.ebf.instant.model.User
 import com.ebf.instant.ui.onboarding.WelcomeScreen
 import com.ebf.instant.ui.theme.InstantTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -41,8 +42,8 @@ fun Auth() {
 }
 
 @Composable
-fun AppContainer() {
-    val allScreens = InstantScreen.values().toList()
+fun AppContainer(currentUser: User) {
+    val allScreens = listOf(InstantScreen.Feed, InstantScreen.Camera, InstantScreen.Account)
     val navController = rememberNavController()
     val backstackEntry = navController.currentBackStackEntryAsState()
     val currentScreen = InstantScreen.fromRoute(backstackEntry.value?.destination?.route)
@@ -57,6 +58,7 @@ fun AppContainer() {
         }
     ) { innerPadding ->
         InstantNavGraph(
+            currentUser = currentUser,
             modifier = Modifier.padding(innerPadding),
             navController = navController
         )

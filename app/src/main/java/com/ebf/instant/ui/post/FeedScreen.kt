@@ -5,15 +5,36 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.ebf.instant.model.PostWithUser
+import com.ebf.instant.model.PostWithData
+import com.ebf.instant.model.User
+import com.google.firebase.auth.FirebaseAuth
+import org.koin.androidx.compose.get
 import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun FeedScreen(viewModel: FeedScreenViewModel = getViewModel()) {
-    val postWithUsers: List<PostWithUser> by viewModel.posts.collectAsState(initial = emptyList())
+fun FeedScreen(
+    currentUser: User,
+    navigateToPostComments: (String) -> Unit,
+    viewModel: FeedScreenViewModel = getViewModel()
+) {
+    val auth = get<FirebaseAuth>()
+    val list: List<PostWithData> by viewModel.posts.collectAsState(initial = emptyList())
+
     LazyColumn {
-        items(postWithUsers) { post ->
-            PostCard(postWithUser = post)
+        items(list) { post ->
+
+            // We are looking for the user like if exists
+            val isLiked = post.likes.find { it.user.id == auth.currentUser?.uid } != null
+
+            PostCard(
+                postWithData = post,
+                isLiked = isLiked,
+                onLikeOrDislike = {
+                    viewModel.likeOrDislikePost(postId = post.post.id)
+                },
+                currentUser = currentUser,
+                navigateToPostComments = navigateToPostComments
+            )
         }
     }
 }

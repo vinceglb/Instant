@@ -6,17 +6,26 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.ebf.instant.local.converter.DateConverter
+import com.ebf.instant.local.dao.CommentDao
+import com.ebf.instant.local.dao.LikeDao
 import com.ebf.instant.local.dao.PostDao
 import com.ebf.instant.local.dao.UserDao
+import com.ebf.instant.model.Comment
+import com.ebf.instant.model.Like
 import com.ebf.instant.model.Post
 import com.ebf.instant.model.User
 
-@Database(entities = [Post::class, User::class], version = 1)
+@Database(
+    entities = [Post::class, User::class, Comment::class, Like::class],
+    version = 1
+)
 @TypeConverters(DateConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun postDao(): PostDao
     abstract fun userDao(): UserDao
+    abstract fun commentDao(): CommentDao
+    abstract fun likeDao(): LikeDao
 
     companion object {
 

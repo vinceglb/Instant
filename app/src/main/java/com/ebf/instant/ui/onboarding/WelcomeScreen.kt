@@ -85,7 +85,7 @@ fun WelcomeScreen(viewModel: LoginScreenViewModel = getViewModel()) {
             content = {}
         )
     } else {
-        AppContainer()
+        AppContainer(uiState.user)
     }
 
 }

@@ -19,6 +19,14 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        kapt {
+            arguments {
+                // Room export schema
+                // See here: https://stackoverflow.com/a/48674264/7947225
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
     }
 
     buildTypes {
@@ -102,6 +110,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-placeholder-material:$accompanist_version"
 
     // Other libs
+    implementation 'org.ocpsoft.prettytime:prettytime:5.0.2.Final'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation "io.coil-kt:coil-compose:1.4.0"

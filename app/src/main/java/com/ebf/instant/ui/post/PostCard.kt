@@ -2,10 +2,7 @@ package com.ebf.instant.ui.post
 
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -15,14 +12,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ChatBubbleOutline
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -32,30 +30,33 @@ import androidx.compose.ui.unit.dp
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import com.ebf.instant.R
-import com.ebf.instant.model.PostWithUser
-import com.ebf.instant.model.Post
-import com.ebf.instant.model.User
+import com.ebf.instant.model.*
 import com.ebf.instant.ui.theme.InstantTheme
+import org.ocpsoft.prettytime.PrettyTime
 import java.util.*
-
-enum class BounceState { Pressed, Released }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PostCard(
-    postWithUser: PostWithUser,
+    postWithData: PostWithData,
+    isLiked: Boolean,
+    currentUser: User,
+    navigateToPostComments: (String) -> Unit,
+    onLikeOrDislike: () -> Unit,
     preview: Boolean = false
 ) {
-
-    var isLiked by remember { mutableStateOf(false) }
+    val prettyTime = remember { PrettyTime() }
 
     Column(
-        modifier = Modifier
-            .padding(horizontal = 8.dp, vertical = 12.dp)
+        modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
-                painter = painter(url = postWithUser.user.imageUrl, tool = R.drawable.profile_pitcure, preview = preview),
+                painter = painter(
+                    url = postWithData.user.imageUrl,
+                    tool = R.drawable.profile_pitcure,
+                    preview = preview
+                ),
                 contentDescription = "Image de profile",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -67,88 +68,114 @@ fun PostCard(
 
             Column {
                 Text(
-                    text = postWithUser.user.username,
+                    text = postWithData.user.username,
                     style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.Bold)
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = "Il y a 18 minutes",
+                    text = prettyTime.format(postWithData.post.date),
                     style = MaterialTheme.typography.caption,
                 )
             }
         }
 
-        Text(
-            text = "Aujourd'hui, on a fait une super sortie en forêt et c'était top !",
-            style = MaterialTheme.typography.body1,
-            modifier = Modifier.padding(vertical = 16.dp)
-        )
+        postWithData.post.description?.let { description ->
+            Text(
+                text = description,
+                style = MaterialTheme.typography.body1,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+        } ?: Spacer(modifier = Modifier.height(16.dp))
 
-        PostCardImage(postWithUser = postWithUser, isLiked = isLiked, preview = preview) { isLiked = !isLiked }
+        PostCardImage(postWithData = postWithData, isLiked = isLiked, preview = preview) {
+            onLikeOrDislike()
+        }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             // Like
-            LikeButton(isLiked = isLiked) { isLiked = !isLiked }
+            LikeButton(isLiked = isLiked) {
+                onLikeOrDislike()
+            }
 
             // Comment
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = { navigateToPostComments(postWithData.post.id) }) {
                 Icon(Icons.Rounded.ChatBubbleOutline, contentDescription = "Comment icon")
             }
 
             Spacer(modifier = Modifier.weight(1f))
 
             // Profile picture images to represent likes
-            ProfilesLikes()
+            ProfilesLikes(
+                likes = postWithData.likes,
+                isLiked = isLiked,
+                currentUser = currentUser
+            )
         }
 
         Surface(
-            onClick = { /* TODO */ },
+            onClick = { navigateToPostComments(postWithData.post.id) },
             modifier = Modifier
                 .fillMaxWidth()
         ) {
             Column {
-                Text(buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("romain.g")
-                    }
-                    append(" ")
-                    append("Wow ça à l'air super beau !!")
-                }, modifier = Modifier.padding(vertical = 2.dp))
-                Text(buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("sophy.algs")
-                    }
-                    append(" ")
-                    append("On a passé un super moment.")
-                }, modifier = Modifier.padding(vertical = 1.dp))
+                postWithData.comments.forEach { commentWithUser ->
+                    Text(buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append(commentWithUser.user.username)
+                        }
+                        append(" ")
+                        append(commentWithUser.comment.content)
+                    }, modifier = Modifier.padding(vertical = 2.dp))
+                }
             }
         }
-
     }
 }
 
 @Composable
-fun PostCardImage(postWithUser: PostWithUser, isLiked: Boolean, preview: Boolean, onDoubleTap: () -> Unit) {
-    var currentState: BounceState by remember { mutableStateOf(BounceState.Released) }
-
-    val scale by animateFloatAsState(
-        targetValue = if (currentState == BounceState.Pressed) 1.03f else 1f,
-        finishedListener = { currentState = BounceState.Released },
-        animationSpec = spring(dampingRatio = if (currentState == BounceState.Released) Spring.DampingRatioMediumBouncy else Spring.DampingRatioNoBouncy)
-    )
-
-    val cardElevation by animateDpAsState(targetValue = if (isLiked) 8.dp else 0.dp)
+fun PostCardImage(
+    postWithData: PostWithData,
+    isLiked: Boolean,
+    preview: Boolean,
+    onDoubleTap: () -> Unit
+) {
+    val currentState = if (isLiked) LikeState.Liked else LikeState.Unliked
+    val transition = updateTransition(targetState = currentState, "Like transition")
+    val elevation by transition.animateDp(label = "Card elevation") { state ->
+        when(state) {
+            LikeState.Unliked -> 0.dp
+            LikeState.Liked -> 8.dp
+        }
+    }
+    val scale by transition.animateFloat(
+        label = "Card scale",
+        transitionSpec = {
+            when {
+                LikeState.Unliked isTransitioningTo LikeState.Liked -> keyframes {
+                    durationMillis = 350
+                    0.99f at 100
+                    1.03f at 220
+                }
+                else -> tween()
+            }
+        }
+    ) { state ->
+        when(state) {
+            LikeState.Unliked -> 1f
+            LikeState.Liked -> 1f
+        }
+    }
 
     Card(
         shape = MaterialTheme.shapes.medium,
-        elevation = cardElevation,
+        elevation = elevation,
         modifier = Modifier
             .scale(scale)
             .pointerInput(Unit) {
                 detectTapGestures(
                     onDoubleTap = {
                         onDoubleTap()
-                        currentState = BounceState.Pressed
+                        // currentState = BounceState.Pressed
                     }
                 )
             }
@@ -156,7 +183,11 @@ fun PostCardImage(postWithUser: PostWithUser, isLiked: Boolean, preview: Boolean
         Box(contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
             Image(
-                painter = painter(postWithUser.post.imageUrl, R.drawable.post_image_example, preview = preview),
+                painter = painter(
+                    postWithData.post.imageUrl,
+                    R.drawable.post_image_example,
+                    preview = preview
+                ),
                 contentDescription = "Image du post",
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
@@ -186,37 +217,9 @@ fun LikeButton(isLiked: Boolean, onClick: () -> Unit) {
     }
 }
 
-@Composable
-fun ProfilesLikes() {
-    Box {
-        ProfileLikeIcon(R.drawable.profile_pitcure)
-        Row {
-            Spacer(modifier = Modifier.width(18.dp))
-            ProfileLikeIcon(R.drawable.profile_pitcure)
-        }
-    }
-}
-
-@Composable
-fun ProfileLikeIcon(
-    @DrawableRes profileImage: Int,
-    modifier: Modifier = Modifier
-) {
-    Box(contentAlignment = Alignment.Center, modifier = modifier) {
-        Surface(
-            shape = CircleShape,
-            color = MaterialTheme.colors.surface,
-            modifier = Modifier.size(28.dp),
-            content = {}
-        )
-        Image(
-            painter = painterResource(id = profileImage),
-            contentDescription = null,
-            modifier = Modifier
-                .size(22.dp)
-                .clip(CircleShape)
-        )
-    }
+enum class LikeState {
+    Liked,
+    Unliked
 }
 
 @Composable
@@ -229,19 +232,40 @@ fun painter(url: String, @DrawableRes tool: Int, preview: Boolean): ImagePainter
         }
     )
 
+@Preview
+@Composable
+fun PostCardImagePreview() {
+    InstantTheme {
+        PostCardImage(postWithData = fakePost, isLiked = false, preview = true) {}
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun PostCardPreview() {
-    val post = PostWithUser(
-        post = Post(
-            id = "test",
-            imageUrl = "",
-            date = Date(),
-            userId = "test"
-        ),
-        user = User(id = "test", username = "vince.app", name = "Vincent", ""),
-    )
     InstantTheme {
-        PostCard(postWithUser = post, preview = true)
+        PostCard(postWithData = fakePost, preview = true, isLiked = false, onLikeOrDislike = {}, currentUser = User("", "romain.glb", "Vince", ""), navigateToPostComments = {})
     }
 }
+
+private val fakePost = PostWithData(
+    post = Post(
+        id = "test",
+        imageUrl = "",
+        date = Date(),
+        userId = "test",
+        description = "Today, we walk all day long in the mountain and it was awesome !"
+    ),
+    user = User(id = "test", username = "vince.app", name = "Vincent", ""),
+    comments = listOf(
+        CommentWithUser(
+            comment = Comment("", Date(), "Yo mec comment ça va ?", "", ""),
+            user = User("", "sophy.algs", "Vince", "")
+        ),
+        CommentWithUser(
+            comment = Comment("", Date(), "Trop beau !", "", ""),
+            user = User("", "romain.glb", "Vince", "")
+        )
+    ),
+    likes = listOf()
+)
