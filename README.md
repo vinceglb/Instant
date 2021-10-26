@@ -43,5 +43,25 @@ Instant is a social media actually under heavy development.
 - Dependency injection: Koin
 - Backend: Firebase Firestore and Storage
 
+## 🚀 Easy startup
+You are able to authenticate with Firebase Auth thank's to the debug.keystore file added to the repo. Feel free to try the project and open pull requests.
+
+
+Durring development, you can use Firebase Emulators to develop easily.
+You can install [Firebase tools here](https://firebase.google.com/docs/cli#install_the_firebase_cli).
+
+First, let's install the functions
+```cmd
+cd firebase/functions
+npm i                       or yarn
+npm run build               or yarn build
+```
+
+Then, we can start emulators in the firebase folder
+```cmd
+cd firebase
+firebase emulators:start
+```
+
 ## 🚧 Work in progress
 The project is actually in development. You are welcome to participate.
