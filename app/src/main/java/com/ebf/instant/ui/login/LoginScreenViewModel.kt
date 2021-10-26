@@ -56,6 +56,7 @@ class LoginScreenViewModel(
             loadingState.emit(LoadingState.LOADED)
         } catch (e: Exception) {
             loadingState.emit(LoadingState.error(e.localizedMessage))
+            e.printStackTrace()
         }
     }
 
