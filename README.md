@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://firebasestorage.googleapis.com/v0/b/instant-ebf.appspot.com/o/github%2Finstant-light-corner-background.png?alt=media&token=2ebf4474-4537-4a86-a1a6-ef8a90d3e726" height="150px" alt="Instant logo" />
+    <img src="https://firebasestorage.googleapis.com/v0/b/instant-ebf.appspot.com/o/github%2Finstant-light-corner-background.png?alt=media&token=390f7718-13cc-41b0-9e5e-575a1be0504a" alt="Instant logo" />
 </p>
 <h3 align="center">Your friends, for real.</h3>
 <p align="center">Share daily random moments with your friends and discover who they really are.</p>
