@@ -1,6 +1,6 @@
 import * as functions from "firebase-functions";
 import { initializeApp } from "firebase-admin/app";
-import { firestore } from "firebase-admin";
+import { firestore, messaging } from "firebase-admin";
 import { CallableContext } from "firebase-functions/v1/https";
 
 initializeApp();
@@ -275,3 +275,25 @@ export const addCommentInfo = builder.firestore.document("/posts/{postId}/commen
       published: true, // Tell the client that this comment is published
     })
   })
+
+export const sendNotif = builder.firestore.document("/posts/{postId}").onCreate(async (snap, context) => {
+  const usersSnap = await firestore().collection("users").get()
+  const list: string[] = []
+
+  for (const doc of usersSnap.docs) {
+    const fcmTokens = await firestore().collection("users").doc(doc.id).collection("fcmTokens").get()
+    fcmTokens.forEach((doc) => {
+      list.push(doc.data().tokenId)
+    })
+  }
+
+  const message = {
+    notification: {
+      title: "Nouveau Instant 🔥",
+      body: "Va vite le découvrir !",
+    },
+    tokens: list,
+  }
+
+  await messaging().sendMulticast(message)
+})
