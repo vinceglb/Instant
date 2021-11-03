@@ -54,11 +54,14 @@ fun InstantGraph(navController: NavHostController = rememberNavController()) {
         composable("home") {
             FeedScreen(
                 navigateToPostComments = {  },
-                navigateToCameraScreen = { navController.navigate("camera") }
+                navigateTo = { navController.navigate(it) }
             )
         }
         composable("camera") {
             CameraScreen()
+        }
+        composable("account") {
+            Text(text = "TODO")
         }
         composable(
             route = "account/{userId}",
