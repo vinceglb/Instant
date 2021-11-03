@@ -51,6 +51,9 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
         useIR = true
+
+        // TODO: Remove when the Coroutine and Flow APIs leave experimental/internal/preview.
+        freeCompilerArgs += "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi"
     }
     kotlin.sourceSets.all {
         languageSettings.optIn("kotlin.RequiresOptIn")
@@ -136,6 +139,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.firebase:firebase-firestore-ktx'
     implementation 'com.google.firebase:firebase-storage-ktx'
+    implementation 'com.google.firebase:firebase-messaging-ktx'
+    implementation 'com.google.firebase:firebase-functions-ktx'
     implementation 'com.google.android.gms:play-services-auth:19.2.0'
 
     // Test
