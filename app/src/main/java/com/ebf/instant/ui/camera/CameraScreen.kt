@@ -1,7 +1,7 @@
 package com.ebf.instant.ui.camera
 
 import android.net.Uri
-import android.util.Log
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,8 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import coil.compose.rememberImagePainter
-import com.google.firebase.storage.ktx.component1
-import com.google.firebase.storage.ktx.component2
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -36,7 +34,8 @@ fun CameraScreen(
             )
             Column(modifier = Modifier.align(Alignment.BottomCenter)) {
 
-                var progress by remember { mutableStateOf(0f) }
+                var progressState by remember { mutableStateOf(0f) }
+                val progress: Float by animateFloatAsState(targetValue = progressState)
 
                 LinearProgressIndicator(progress = progress)
 
@@ -45,7 +44,7 @@ fun CameraScreen(
                         viewModel = viewModel,
                         imageUri = imageUri,
                         onPostUploaded = onPostUploaded,
-                        setProgress = { progress = it }
+                        setProgress = { progressState = it }
                     )
                 }) {
                     Text(text = "Upload 🚀")
@@ -95,36 +94,38 @@ fun publishPost(
     onPostUploaded: () -> Unit,
     setProgress: (Float) -> Unit
 ) {
-    // Upload post image to Firebase Storage
-    val uploadState = viewModel.uploadImage(imageUri)
-
-    // Display progress
-    uploadState.task.addOnProgressListener { (bytesTransferred, totalByteCount) ->
-        setProgress((bytesTransferred * 1f) / totalByteCount)
-    }
-
-    // Get image url
-    uploadState.task.continueWithTask { task ->
-        if (!task.isSuccessful) {
-            task.exception?.let {
-                throw it
-            }
-        }
-        uploadState.reference.downloadUrl
-    }.addOnCompleteListener { task ->
-        if (task.isSuccessful) {
-            // The image url
-            val downloadUri = task.result
-
-            // Publish
-            viewModel.publishPost(downloadUri.toString()) {
-                onPostUploaded()
-            }
-        } else {
-            // Handle failures TODO
-            Log.e("CameraScreen", "Error", task.exception)
-        }
-    }
+    viewModel.createPost(imageUri = imageUri, setProgress = setProgress)
+    onPostUploaded()
+//    // Upload post image to Firebase Storage
+//    val uploadState = viewModel.uploadImage(imageUri)
+//
+//    // Display progress
+//    uploadState.task.addOnProgressListener { (bytesTransferred, totalByteCount) ->
+//        setProgress((bytesTransferred * 1f) / totalByteCount)
+//    }
+//
+//    // Get image url
+//    uploadState.task.continueWithTask { task ->
+//        if (!task.isSuccessful) {
+//            task.exception?.let {
+//                throw it
+//            }
+//        }
+//        uploadState.reference.downloadUrl
+//    }.addOnCompleteListener { task ->
+//        if (task.isSuccessful) {
+//            // The image url
+//            val downloadUri = task.result
+//
+//            // Publish
+//            viewModel.publishPost(downloadUri.toString()) {
+//                onPostUploaded()
+//            }
+//        } else {
+//            // Handle failures TODO
+//            Log.e("CameraScreen", "Error", task.exception)
+//        }
+//    }
 }
 
 val EMPTY_IMAGE_URI: Uri = Uri.parse("file://dev/null")
