@@ -52,6 +52,14 @@ const helper = {
   },
 };
 
+/**
+ * Create user account in the database
+ *
+ * @param data.name - The user name
+ * @param data.username - The user username
+ * @param data.imageUrl - The user profile image url
+ * @returns The id of the user
+ */
 export const createAccount = builder.https.onCall(async (data, context) => {
   // Checking that the user is authenticated.
   const uid = helper.auth(context)
@@ -98,6 +106,37 @@ export const publishPost = builder.https.onCall(async (data, context) => {
   })
 
   return postRef.id
+})
+
+/**
+ * Comment a post
+ *
+ * @param data.postId - The post id where the comment is published
+ * @param data.content - The message of the comment
+ * @returns The id of the comment document
+ */
+export const comment = builder.https.onCall(async (data, context) => {
+  // Checking that the user is authenticated.
+  const uid = helper.auth(context)
+
+  // Checking attribute.
+  const postId = helper.argument(data.postId, "The function must be called with the `data.postId`.")
+  const content = helper.argument(data.content, "The function must be called with the `data.content`.")
+
+  // Get user info
+  const userInfo = await helper.userInfo(uid)
+  if (userInfo === undefined) {
+    throw new functions.https.HttpsError("failed-precondition", "The user info are invalid")
+  }
+
+  // Add the comment
+  const commentRef = await firestore().collection("posts").doc(postId).collection("comments").add({
+    createTimestamp: firestore.FieldValue.serverTimestamp(),
+    userId: uid,
+    content: content,
+  })
+
+  return commentRef.id
 })
 
 /**
@@ -161,9 +200,9 @@ export const removeLike = builder.https.onCall(async (data, context) => {
  *
  * Add this data
  * - user { id, imageUrl, name, username }
- * - valid: true
+ * - published: true
  *
- * The `valid` field can be use by the client to know
+ * The `published` field can be use by the client to know
  * that the like document is usable for display
  */
 export const addLikeInfo = builder.firestore.document("/posts/{postId}/likes/{likeId}")
@@ -191,6 +230,48 @@ export const addLikeInfo = builder.firestore.document("/posts/{postId}/likes/{li
     // Add userinfo and valid field
     await likeRef.update({
       user: userInfo,
-      valid: true, // tell the client it can display this like with the new fresh user info
+      published: true, // tell the client it can display this like with the new fresh user info
     });
   });
+
+/**
+ * When a new comment is added, check if it can exists
+ * and then add user info
+ *
+ * Check if:
+ * - The doc where the comment is created exists
+ * - The user is valid
+ *
+ * Add this data
+ * - user { id, imageUrl, name, username }
+ * - published: true
+ *
+ * The `published` field can be use by the client to know
+ * that the comment document is usable for display
+ */
+export const addCommentInfo = builder.firestore.document("/posts/{postId}/comments/{commentId}")
+  .onCreate(async (snap, context) => {
+    const userId = snap.data().userId
+    const postId = context.params.postId
+    const commentId = context.params.commentId
+
+    const postRef = firestore().collection("posts").doc(postId)
+    const commentRef = firestore().collection("comments").doc(commentId)
+
+    const postDoc = await postRef.get()
+    if (!postDoc.exists) {
+      await commentRef.delete();
+      return functions.logger.error("Delete the comment because the post doesn't exists.", postId, userId, commentId);
+    }
+
+    const userInfo = await helper.userInfo(userId)
+    if (userInfo === undefined) {
+      await commentRef.delete();
+      return functions.logger.error("Delete the comment because the user info are invalid.", postId, userId, commentId, userInfo);
+    }
+
+    await commentRef.update({
+      user: userInfo,
+      published: true, // Tell the client that this comment is published
+    })
+  })
