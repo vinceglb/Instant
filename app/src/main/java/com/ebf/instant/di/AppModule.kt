@@ -14,6 +14,7 @@ import com.ebf.instant.data.signin.datasources.FirebaseAuthStateUserDataSource
 import com.ebf.instant.data.signin.datasources.FirestoreRegisteredUserDataSource
 import com.ebf.instant.data.signin.datasources.RegisteredUserDataSource
 import com.ebf.instant.data.user.FirestoreUserDataSource
+import com.ebf.instant.data.user.FunctionsUserDataSource
 import com.ebf.instant.data.user.UserRepository
 import com.ebf.instant.domain.auth.ObserveUserAuthStateUseCase
 import com.ebf.instant.fcm.FcmTokenUpdater
@@ -47,10 +48,11 @@ val appModule = module {
     single { FirestoreUserDataSource(get()) }
     single { FirestorePostDataSource(get()) }
     single { FunctionsPostDataSource(get()) }
+    single { FunctionsUserDataSource(get()) }
     single { StoragePostDataSource(get(), get()) }
 
     // Repositories
-    single { UserRepository(get()) }
+    single { UserRepository(get(), get()) }
     single { AuthRepository(get()) }
     single { PostRepository(get(), get(), get(), get(), get(), get(), get(), get()) }
 

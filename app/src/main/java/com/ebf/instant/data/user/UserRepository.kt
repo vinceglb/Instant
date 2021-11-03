@@ -1,15 +1,22 @@
 package com.ebf.instant.data.user
 
-import com.ebf.instant.Result
-import com.ebf.instant.data.signin.UserInfo
+import android.net.Uri
+import com.ebf.instant.data.post.StoragePostDataSource
 
 class UserRepository(
-    private val firestoreUserDataSource: FirestoreUserDataSource
+    private val functionsUserDataSource: FunctionsUserDataSource,
+    private val storagePostDataSource: StoragePostDataSource,
 ) {
 
-    suspend fun updateUserInfo(
-        userId: String,
-        userInfo: UserInfo
-    ): Result<UserInfo> = firestoreUserDataSource.updateUserInfo(userId, userInfo)
+    suspend fun createAccount(
+        currentUserId: String,
+        name: String,
+        username: String,
+        imageUri: Uri,
+        setProgress: (Float) -> Unit
+    ) {
+        val url = storagePostDataSource.uploadImage(currentUserId, imageUri, setProgress)
+        functionsUserDataSource.createAccount(name, username, url)
+    }
 
 }

@@ -9,6 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.util.*
 
 class StoragePostDataSource(
     private val storage: FirebaseStorage,
@@ -21,19 +22,23 @@ class StoragePostDataSource(
         imageUri: Uri,
         setProgress: (Float) -> Unit
     ): String = withContext(externalScope.coroutineContext + ioDispatcher) {
+        // Get image extension
         val clip = imageUri.lastPathSegment?.split(".") ?: emptyList()
-        val fileName = clip.getOrElse(0) { "image" }
         val extension = clip.getOrElse(1) { "jpg" }
 
-        val imageRef = storage.reference.child("user/$currentUserId/$fileName.$extension")
-        val task = imageRef.putFile(imageUri)
+        // Random name file
+        val uuid = UUID.randomUUID()
 
+        // Create image ref in storage
+        val imageRef = storage.reference.child("user/$currentUserId/$uuid.$extension")
+
+        // Upload image
+        val task = imageRef.putFile(imageUri)
         task.addOnProgressListener { (bytesTransferred, totalByteCount) ->
             setProgress((bytesTransferred * 1f) / totalByteCount)
-        }
+        }.await()
 
-        task.await()
-
+        // Get download url
         imageRef.downloadUrl.await().toString()
     }
 

@@ -12,7 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import com.ebf.instant.ui.camera.CameraScreen
-import com.ebf.instant.ui.create.CreateAccount
+import com.ebf.instant.ui.create.CreateAccountScreen
 import com.ebf.instant.ui.feed.FeedScreen
 import com.ebf.instant.ui.login.LoginScreen
 import com.ebf.instant.ui.signin.Ok
@@ -32,7 +32,7 @@ fun InstantApp(
                 LoginScreen()
             }
             Ok.LOGGED_NOT_VALID -> {
-                CreateAccount()
+                CreateAccountScreen()
             }
             Ok.LOGGED_VALID -> {
                 InstantGraph()
@@ -43,25 +43,6 @@ fun InstantApp(
         }
     }
 
-
-//    NavHost(
-//        navController = navController,
-//        startDestination = "launch"
-//    ) {
-//        // We launch the app in this section to let us determinate
-//        // if the user is logged in or not (see Auth)
-//        composable("launch") { }
-//
-//        // All the screens related to the on boarding section
-//        loginGraph()
-//
-//        // All the screens of the app. Here, the user must be logged in.
-//        appGraph(navController)
-//    }
-//
-//    // Composable observing currentUser.
-//    // It routes to the right screens according to the currentUser state
-//    Auth(navController = navController)
 }
 
 @Composable
@@ -89,72 +70,3 @@ fun InstantGraph(navController: NavHostController = rememberNavController()) {
         }
     }
 }
-
-//fun NavGraphBuilder.loginGraph() {
-//    navigation(startDestination = "welcome", route = "login") {
-//        composable("welcome") {
-//            LoginScreen()
-//        }
-//        composable("create") {
-//            CreateAccount()
-//        }
-//    }
-//}
-//
-//fun NavGraphBuilder.appGraph(navController: NavController) {
-//    navigation(startDestination = "home", route = "app") {
-//        composable("home") {
-//            Text(text = "Home")
-////            FeedScreen { userId: String ->
-////                navController.navigate("account/$userId")
-////            }
-//        }
-//
-//        composable(
-//            route = "account/{userId}",
-//            arguments = listOf(navArgument("userId") { type = NavType.StringType }),
-//            deepLinks = listOf(navDeepLink {
-//                uriPattern = "instant://account/{userId}"
-//            })
-//        ) { backStackEntry: NavBackStackEntry ->
-//            // `userId` should always be present.
-//            // If that's not the case, fail crashing the app!
-//            val userId = backStackEntry.arguments?.getString("userId")!!
-//            Text(text = "Account $userId")
-////            AccountScreen(userId = userId) {
-////                navController.navigate("home")
-////            }
-//        }
-//    }
-//}
-//
-//@Composable
-//fun Auth(
-//    navController: NavController,
-//    viewModel: InstantAppViewModel = getViewModel()
-//) {
-//    val userState by viewModel.userState.collectAsState()
-//    val currentRoute = navController.currentBackStackEntry?.destination?.route
-//
-//    Timber.d("User State $userState")
-//
-//    when (userState) {
-//        Ok.NOT_CONNECTED -> {
-//            navController.navigate("login") {
-//                navController.popBackStack()
-//            }
-//        }
-//
-//        Ok.LOGGED_NOT_VALID -> {
-//            navController.navigate("create")
-//        }
-//
-//        Ok.LOGGED_VALID -> {
-//            navController.navigate("app") {
-//                navController.popBackStack()
-//            }
-//        }
-//
-//        else -> { }
-//    }
-//}
