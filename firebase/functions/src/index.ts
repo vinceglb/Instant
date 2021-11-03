@@ -256,7 +256,7 @@ export const addCommentInfo = builder.firestore.document("/posts/{postId}/commen
     const commentId = context.params.commentId
 
     const postRef = firestore().collection("posts").doc(postId)
-    const commentRef = firestore().collection("comments").doc(commentId)
+    const commentRef = postRef.collection("comments").doc(commentId)
 
     const postDoc = await postRef.get()
     if (!postDoc.exists) {
