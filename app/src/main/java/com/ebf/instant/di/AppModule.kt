@@ -1,6 +1,8 @@
 package com.ebf.instant.di
 
 import com.ebf.instant.data.AuthRepository
+import com.ebf.instant.data.comment.CommentRepository
+import com.ebf.instant.data.comment.FunctionsCommentDataSource
 import com.ebf.instant.data.db.AppDatabase
 import com.ebf.instant.data.post.FirestorePostDataSource
 import com.ebf.instant.data.post.FunctionsPostDataSource
@@ -20,6 +22,7 @@ import com.ebf.instant.domain.auth.ObserveUserAuthStateUseCase
 import com.ebf.instant.fcm.FcmTokenUpdater
 import com.ebf.instant.ui.InstantAppViewModel
 import com.ebf.instant.ui.camera.CameraScreenViewModel
+import com.ebf.instant.ui.comment.CommentScreenViewModel
 import com.ebf.instant.ui.create.CreateAccountViewModel
 import com.ebf.instant.ui.feed.FeedViewModel
 import com.ebf.instant.ui.login.LoginScreenViewModel
@@ -49,12 +52,14 @@ val appModule = module {
     single { FirestorePostDataSource(get()) }
     single { FunctionsPostDataSource(get()) }
     single { FunctionsUserDataSource(get()) }
+    single { FunctionsCommentDataSource(get()) }
     single { StoragePostDataSource(get(), get()) }
 
     // Repositories
     single { UserRepository(get(), get()) }
     single { AuthRepository(get()) }
-    single { PostRepository(get(), get(), get(), get(), get(), get(), get(), get()) }
+    single { PostRepository(get(), get(), get(), get(), get(), get(), get()) }
+    single { CommentRepository(get(), get()) }
 
     // Room db
     single { AppDatabase.init(androidContext()) }
@@ -76,6 +81,7 @@ val appModule = module {
     viewModel { LoginScreenViewModel(get()) }
     viewModel { FeedViewModel(get(), get(), get()) }
     viewModel { CameraScreenViewModel(get(), get()) }
+    viewModel { params -> CommentScreenViewModel(get(), get(), get(), postId = params.get()) }
 
     factory<RegisteredUserDataSource> { FirestoreRegisteredUserDataSource(get()) }
     single<AuthStateUserDataSource> { FirebaseAuthStateUserDataSource(get(), get(), get()) }

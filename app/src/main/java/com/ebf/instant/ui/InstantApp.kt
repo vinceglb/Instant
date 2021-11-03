@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import com.ebf.instant.ui.camera.CameraScreen
+import com.ebf.instant.ui.comment.CommentScreen
 import com.ebf.instant.ui.create.CreateAccountScreen
 import com.ebf.instant.ui.feed.FeedScreen
 import com.ebf.instant.ui.login.LoginScreen
@@ -53,12 +54,16 @@ fun InstantGraph(navController: NavHostController = rememberNavController()) {
     ) {
         composable("home") {
             FeedScreen(
-                navigateToPostComments = {  },
+                navigateToPostComments = { navController.navigate("post/$it/comments") },
                 navigateTo = { navController.navigate(it) }
             )
         }
         composable("camera") {
             CameraScreen()
+        }
+        composable("post/{postId}/comments") { backStackEntry ->
+            val postId = backStackEntry.arguments?.getString("postId")!!
+            CommentScreen(postId = postId, onBack = { navController.navigateUp() })
         }
         composable("account") {
             Text(text = "TODO")

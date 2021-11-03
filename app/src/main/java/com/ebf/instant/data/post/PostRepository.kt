@@ -5,11 +5,7 @@ import com.ebf.instant.data.db.dao.CommentDao
 import com.ebf.instant.data.db.dao.LikeDao
 import com.ebf.instant.data.db.dao.PostDao
 import com.ebf.instant.data.db.dao.UserDao
-import com.ebf.instant.data.signin.UserInfo
 import com.ebf.instant.model.*
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.UploadTask
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -22,7 +18,6 @@ class PostRepository(
     private val userDao: UserDao,
     private val likeDao: LikeDao,
     private val commentDao: CommentDao,
-    private val storage: FirebaseStorage,
     private val storagePostDataSource: StoragePostDataSource,
     private val appDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) {
@@ -68,33 +63,26 @@ class PostRepository(
         emitAll(postDao.loadAll())
     }.flowOn(appDispatcher)
 
-    suspend fun likeOrDislikePost(currentUserId: String, userInfo: UserInfo, postId: String) {
+    suspend fun likeOrDislikePost(currentUser: User, postId: String) {
 
         // Get the like if the user already liked the post
         @Suppress("MoveVariableDeclarationIntoWhen")
-        val likeFromDb = likeDao.getLike(userId = currentUserId, postId = postId)
+        val likeFromDb = likeDao.getLike(userId = currentUser.id, postId = postId)
 
         when(likeFromDb) {
 
             null -> {
-                val user = User(
-                    id = currentUserId,
-                    username = userInfo.username ?: "",
-                    name = userInfo.name ?: "",
-                    imageUrl = userInfo.imageUrl ?: ""
-                )
                 val likeWithUser = LikeWithUser(
                     like = Like(
-                        id = "$postId-$currentUserId",
+                        id = "$postId-${currentUser.id}",
                         date = Date(),
-                        userId = currentUserId,
+                        userId = currentUser.id,
                         postId = postId
                     ),
-                    user = user
+                    user = currentUser
                 )
-                likeDao.insert(user = user, like = likeWithUser.like)
+                likeDao.insert(user = currentUser, like = likeWithUser.like)
                 functionsPostDataSource.likePost(postId = postId)
-                // postDataSource.likePost(likeWithUser)
             }
 
             else -> {
@@ -103,7 +91,6 @@ class PostRepository(
 
                 // Remove from network
                 functionsPostDataSource.removeLikePost(postId = postId)
-                // postDataSource.dislikePost(postId = postId, userId = currentUserId)
             }
 
         }
@@ -113,10 +100,5 @@ class PostRepository(
         val url = storagePostDataSource.uploadImage(currentUserId, imageUri, setProgress)
         functionsPostDataSource.createPost(url)
     }
-
-    data class StorageUploadState(
-        val task: UploadTask,
-        val reference: StorageReference
-    )
 
 }

@@ -2,6 +2,7 @@ package com.ebf.instant.ui.signin
 
 import com.ebf.instant.data.signin.AuthenticatedUserInfo
 import com.ebf.instant.domain.auth.ObserveUserAuthStateUseCase
+import com.ebf.instant.model.User
 import com.ebf.instant.util.WhileViewSubscribed
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
@@ -20,6 +21,8 @@ interface SignInViewModelDelegate {
      * Returns the current user ID or null if not available.
      */
     val userIdValue: String?
+
+    val userValue: User?
 
     val userState: StateFlow<Ok>
 
@@ -60,6 +63,15 @@ internal class FirebaseSignInViewModelDelegate(
     override val userIdValue: String?
         get() = userInfo.value?.getUid()
 
+    override val userValue: User?
+        get() = userInfo.value?.let {
+            User(
+                id = it.getUid()!!,
+                name = it.getName()!!,
+                username = it.getUsername()!!,
+                imageUrl = it.getProfilePictureUrl()!!
+            )
+        }
 }
 
 enum class Ok {

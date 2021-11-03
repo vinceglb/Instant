@@ -3,7 +3,6 @@ package com.ebf.instant.ui.feed
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ebf.instant.data.post.PostRepository
-import com.ebf.instant.data.signin.UserInfo
 import com.ebf.instant.model.PostWithData
 import com.ebf.instant.ui.signin.SignInViewModelDelegate
 import kotlinx.coroutines.CoroutineScope
@@ -38,16 +37,8 @@ class FeedViewModel(
 
     fun likeOrDislikePost(postId: String) {
         externalScope.launch {
-            userInfo.value?.let { user ->
-                postRepository.likeOrDislikePost(
-                    currentUserId = user.getUid()!!,
-                    userInfo = UserInfo(
-                        name = user.getName(),
-                        username = user.getUsername(),
-                        imageUrl = user.getProfilePictureUrl()
-                    ),
-                    postId = postId,
-                )
+            userValue?.let { user ->
+                postRepository.likeOrDislikePost(currentUser = user, postId = postId)
             }
         }
     }
