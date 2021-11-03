@@ -52,6 +52,24 @@ const helper = {
   },
 };
 
+export const createAccount = builder.https.onCall(async (data, context) => {
+  // Checking that the user is authenticated.
+  const uid = helper.auth(context)
+
+  // Checking attributes
+  const name = helper.argument(data.name, "The function must be called with the `data.name` of the user.")
+  const username = helper.argument(data.username, "The function must be called with the `data.username` of the user.")
+  const imageUrl = helper.argument(data.imageUrl, "The function must be called with the `data.imageUrl`.")
+
+  await firestore().collection("users").doc(uid).set({
+    name,
+    username,
+    imageUrl,
+  })
+
+  return uid
+})
+
 /**
  * Publish a new post
  *
