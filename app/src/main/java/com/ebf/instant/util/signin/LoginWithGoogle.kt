@@ -10,7 +10,7 @@ import com.google.android.gms.common.api.ApiException
 import timber.log.Timber
 
 class LoginWithGoogle : ActivityResultContract<Unit, String?>() {
-    override fun createIntent(context: Context, input: Unit?): Intent {
+    override fun createIntent(context: Context, input: Unit): Intent {
         val token = context.getString(R.string.default_web_client_id)
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(token)
