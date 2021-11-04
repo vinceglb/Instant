@@ -1,7 +1,6 @@
 package com.ebf.instant.ui
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -38,9 +37,7 @@ fun InstantApp(
             Ok.LOGGED_VALID -> {
                 InstantGraph()
             }
-            else -> {
-                CircularProgressIndicator()
-            }
+            else -> { /* TODO placeholder ? */ }
         }
     }
 

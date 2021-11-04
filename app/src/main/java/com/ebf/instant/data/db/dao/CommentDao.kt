@@ -16,7 +16,7 @@ interface CommentDao {
     suspend fun insertList(comments: List<Comment>)
 
     @Transaction
-    @Query("SELECT * FROM comment WHERE postId = :postId ORDER BY date DESC")
+    @Query("SELECT * FROM comment WHERE postId = :postId ORDER BY createDate ASC")
     fun commentsFromPost(postId: String): Flow<List<CommentWithUser>>
 
     @Delete

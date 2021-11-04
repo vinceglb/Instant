@@ -20,7 +20,7 @@ class CommentRepository(
         val tempId = UUID.randomUUID().toString()
         val comment = Comment(
             id = tempId,
-            date = Date(),
+            createDate = Date(),
             content = message,
             userId = currentUser.id,
             postId = postId

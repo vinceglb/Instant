@@ -45,7 +45,7 @@ fun parseCommentItem(snapshot: DocumentSnapshot, postId: String): CommentWithUse
         comment = Comment(
             id = snapshot.id,
             content = snapshot[COMMENT_CONTENT].castOrDefault(""),
-            date = snapshot[COMMENT_TIMESTAMP].castOrDefault(Timestamp.now()).toDate(),
+            createDate = snapshot[COMMENT_TIMESTAMP].castOrDefault(Timestamp.now()).toDate(),
             userId = snapshot["$COMMENT_USER.$USER_ID"].castOrDefault(""),
             postId = postId
         ),

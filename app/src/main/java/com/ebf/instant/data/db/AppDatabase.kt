@@ -35,9 +35,7 @@ abstract class AppDatabase : RoomDatabase() {
          * @param dbName the name of the database
          */
         fun init(context: Context, dbName: String = "Instant.db"): AppDatabase =
-            Room.databaseBuilder(context, AppDatabase::class.java, dbName)
-                .fallbackToDestructiveMigration()
-                .build()
+            Room.databaseBuilder(context, AppDatabase::class.java, dbName).build()
 
     }
 

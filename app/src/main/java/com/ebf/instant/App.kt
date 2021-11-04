@@ -41,7 +41,7 @@ class App : Application() {
     private fun initFirebaseEmulators() {
         // Setup Firebase emulators during development
         if (BuildConfig.DEBUG) {
-            val ip = "10.0.2.2" // "192.168.1.98"
+            val ip = "192.168.1.98" // "10.0.2.2" // "192.168.1.98"
 
             // Authentication
             val auth = get<FirebaseAuth>()

@@ -64,9 +64,9 @@ class FirestorePostDataSource(
         const val USER_NAME = "name"
         const val USER_IMAGE_URL = "imageUrl"
 
-        const val COMMENT_CONTENT = "comment_content"
-        const val COMMENT_TIMESTAMP = "comment_timestamp"
-        const val COMMENT_USER = "comment_user"
+        const val COMMENT_CONTENT = "content"
+        const val COMMENT_TIMESTAMP = "createTimestamp"
+        const val COMMENT_USER = "user"
 
         const val LIKE_TIMESTAMP = "timestamp"
         const val LIKE_USER = "user"

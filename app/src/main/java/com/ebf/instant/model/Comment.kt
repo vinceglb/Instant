@@ -10,7 +10,7 @@ import java.util.*
 data class Comment(
     @PrimaryKey
     val id: String,
-    val date: Date,
+    val createDate: Date,
     val content: String,
     val userId: String,
     val postId: String
