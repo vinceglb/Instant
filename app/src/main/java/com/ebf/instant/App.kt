@@ -5,6 +5,7 @@ import com.ebf.instant.di.appModule
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
+import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.storage.FirebaseStorage
 import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
@@ -22,7 +23,7 @@ class App : Application() {
             androidContext(this@App)
             modules(appModule)
         }
-        initFirebaseEmulators()
+        // initFirebaseEmulators()
     }
 
     /**
@@ -40,18 +41,24 @@ class App : Application() {
     private fun initFirebaseEmulators() {
         // Setup Firebase emulators during development
         if (BuildConfig.DEBUG) {
+            val ip = "10.0.2.2" // "192.168.1.98"
+
             // Authentication
             val auth = get<FirebaseAuth>()
-            auth.useEmulator("10.0.2.2", 9099)
+            auth.useEmulator(ip, 9099)
 
             // Storage
             val storage = get<FirebaseStorage>()
-            storage.useEmulator("10.0.2.2", 9199)
+            storage.useEmulator(ip, 9199)
+
+            // Functions
+            val functions = get<FirebaseFunctions>()
+            functions.useEmulator(ip, 5001)
 
             // Firestore
             val firestore = get<FirebaseFirestore>()
             val settings = FirebaseFirestoreSettings.Builder().setPersistenceEnabled(false).build()
-            firestore.useEmulator("10.0.2.2", 8080)
+            firestore.useEmulator(ip, 8080)
             firestore.firestoreSettings = settings
         }
     }

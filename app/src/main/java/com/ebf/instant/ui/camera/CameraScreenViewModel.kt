@@ -3,18 +3,18 @@ package com.ebf.instant.ui.camera
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ebf.instant.remote.StorageDataSource.StorageUploadState
-import com.ebf.instant.repo.PostRepository
+import com.ebf.instant.data.post.PostRepository
+import com.ebf.instant.ui.signin.SignInViewModelDelegate
 import kotlinx.coroutines.launch
 
-class CameraScreenViewModel(private val postRepository: PostRepository) : ViewModel() {
+class CameraScreenViewModel(
+    delegate: SignInViewModelDelegate,
+    private val postRepository: PostRepository,
+) : ViewModel(), SignInViewModelDelegate by delegate {
 
-    fun uploadImage(imageUri: Uri): StorageUploadState = postRepository.uploadImage(imageUri)
-
-    fun publishPost(imageUrl: String, onPublished: () -> Unit) {
-        viewModelScope.launch {
-            postRepository.publishPost(imageUrl)
-            onPublished()
+    fun createPost(imageUri: Uri, setProgress: (Float) -> Unit) = viewModelScope.launch {
+        userIdValue?.let {
+            postRepository.createPost(currentUserId = it, imageUri = imageUri, setProgress = setProgress)
         }
     }
 
