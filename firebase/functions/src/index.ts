@@ -308,6 +308,7 @@ export const newPostNotif = builder.firestore.document("/posts/{postId}").onCrea
 
 export const newCommentNotif = builder.firestore.document("/posts/{postId}/comments/{commentId}").onUpdate(async (change) => {
   const commentUserUsername = change.after.data().user.username
+  const commentUserId = change.after.data().user.id
 
   const usersSnap = await firestore().collection("users").get()
   const list: string[] = []
@@ -315,7 +316,9 @@ export const newCommentNotif = builder.firestore.document("/posts/{postId}/comme
   for (const doc of usersSnap.docs) {
     const fcmTokens = await firestore().collection("users").doc(doc.id).collection("fcmTokens").get()
     fcmTokens.forEach((doc) => {
-      list.push(doc.data().tokenId)
+      if (doc.id !== commentUserId) {
+        list.push(doc.data().tokenId)
+      }
     })
   }
 
