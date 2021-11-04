@@ -42,8 +42,8 @@ fun FeedScreen(
                 PostCard(
                     postWithData = post,
                     currentUserId = viewModel.userIdValue,
-                    onLikeOrDislike = {
-                        viewModel.likeOrDislikePost(postId = post.post.id)
+                    onLikeOrDislike = { postId ->
+                        viewModel.likeOrDislikePost(postId = postId)
                     },
                     navigateToPostComments = navigateToPostComments
                 )

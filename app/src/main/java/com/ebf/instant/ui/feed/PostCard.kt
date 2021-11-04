@@ -41,7 +41,7 @@ fun PostCard(
     postWithData: PostWithData,
     currentUserId: String?,
     navigateToPostComments: (String) -> Unit,
-    onLikeOrDislike: () -> Unit,
+    onLikeOrDislike: (String) -> Unit,
     preview: Boolean = false
 ) {
     val prettyTime = remember { PrettyTime() }
@@ -94,13 +94,13 @@ fun PostCard(
             isLiked = isLiked,
             preview = preview
         ) {
-            onLikeOrDislike()
+            onLikeOrDislike(postWithData.post.id)
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             // Like
             LikeButton(isLiked = isLiked) {
-                onLikeOrDislike()
+                onLikeOrDislike(postWithData.post.id)
             }
 
             // Comment
