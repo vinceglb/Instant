@@ -8,7 +8,7 @@ initializeApp();
 const builder = functions.region("europe-west1");
 
 interface UserInfo {
-  userId: string
+  id: string
   imageUrl: string
   name: string
   username: string
@@ -44,7 +44,7 @@ const helper = {
     }
 
     return {
-      userId: userId,
+      id: userId,
       name: userInfo.name,
       username: userInfo.username,
       imageUrl: userInfo.imageUrl,
@@ -276,7 +276,14 @@ export const addCommentInfo = builder.firestore.document("/posts/{postId}/commen
     })
   })
 
-export const sendNotif = builder.firestore.document("/posts/{postId}").onCreate(async (snap, context) => {
+/**
+ * NOTIFICATION SECTION
+ */
+
+export const newPostNotif = builder.firestore.document("/posts/{postId}").onCreate(async (snap) => {
+  const postImageUrl = snap.data().imageUrl
+  const postUserUsername = snap.data().user.username
+
   const usersSnap = await firestore().collection("users").get()
   const list: string[] = []
 
@@ -289,8 +296,59 @@ export const sendNotif = builder.firestore.document("/posts/{postId}").onCreate(
 
   const message = {
     notification: {
-      title: "Nouveau Instant 🔥",
+      title: "Nouveau Instant de " + postUserUsername + " 🔥",
       body: "Va vite le découvrir !",
+      image: postImageUrl,
+    },
+    tokens: list,
+  }
+
+  await messaging().sendMulticast(message)
+})
+
+export const newCommentNotif = builder.firestore.document("/posts/{postId}/comments/{commentId}").onUpdate(async (change) => {
+  const commentUserUsername = change.after.data().user.username
+
+  const usersSnap = await firestore().collection("users").get()
+  const list: string[] = []
+
+  for (const doc of usersSnap.docs) {
+    const fcmTokens = await firestore().collection("users").doc(doc.id).collection("fcmTokens").get()
+    fcmTokens.forEach((doc) => {
+      list.push(doc.data().tokenId)
+    })
+  }
+
+  const message = {
+    notification: {
+      title: "Nouveau commentaire de " + commentUserUsername + " 😋",
+      body: "Va vite lui répondre !",
+    },
+    tokens: list,
+  }
+
+  await messaging().sendMulticast(message)
+})
+
+export const newLikeNotif = builder.firestore.document("/posts/{postId}/likes/{likeId}").onUpdate(async (change, context) => {
+  const postId = context.params.postId
+  const likeUserUsername = change.after.data().user.username
+
+  const postSnap = await firestore().collection("posts").doc(postId).get()
+  const userData = postSnap.data()
+  if (!userData) return
+  const userId = userData.user.id
+
+  const list: string[] = []
+  const fcmTokens = await firestore().collection("users").doc(userId).collection("fcmTokens").get()
+  fcmTokens.forEach((doc) => {
+    list.push(doc.data().tokenId)
+  })
+
+  const message = {
+    notification: {
+      title: "Nouveau like de " + likeUserUsername + " 🧡",
+      body: "Ça fait plaisir 🥰",
     },
     tokens: list,
   }
