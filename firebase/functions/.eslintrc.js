@@ -31,5 +31,6 @@ module.exports = {
     "object-curly-spacing": 0,
     "indent": 0,
     "semi": 0,
+    "linebreak-style": 0,
   },
 };
