@@ -38,7 +38,10 @@ fun FeedScreen(
         }
     ) { innerPadding ->
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
-            items(state.posts) { post ->
+            items(
+                items = state.posts,
+                key = { it.post.id }
+            ) { post ->
                 PostCard(
                     postWithData = post,
                     currentUserId = viewModel.userIdValue,
