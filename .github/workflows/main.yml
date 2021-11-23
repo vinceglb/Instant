@@ -29,12 +29,6 @@ jobs:
         with:
           java-version: 11
 
-      # Decode Google services configuration file
-      - name: Decode google-services.json
-        env:
-          FIREBASE_SECRET: ${{ secrets.FIREBASE_SECRET }}
-        run: echo $FIREBASE_SECRET > app/google-services.json
-
       - uses: actions/cache@v2
         with:
           path: |
