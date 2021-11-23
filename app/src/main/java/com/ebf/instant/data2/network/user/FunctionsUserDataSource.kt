@@ -1,4 +1,4 @@
-package com.ebf.instant.data.user
+package com.ebf.instant.data2.network.user
 
 import com.google.firebase.functions.FirebaseFunctions
 import kotlinx.coroutines.CoroutineDispatcher
@@ -24,5 +24,4 @@ class FunctionsUserDataSource(
                 .call(data)
                 .await()
         }
-
 }

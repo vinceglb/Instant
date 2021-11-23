@@ -1,4 +1,4 @@
-package com.ebf.instant.data.post
+package com.ebf.instant.data2.network.post
 
 import com.ebf.instant.model.CommentWithUser
 import com.ebf.instant.model.LikeWithUser

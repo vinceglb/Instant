@@ -1,15 +1,27 @@
-package com.ebf.instant.data.post
+package com.ebf.instant.data2.repository
 
 import android.net.Uri
 import com.ebf.instant.data.db.dao.CommentDao
 import com.ebf.instant.data.db.dao.LikeDao
 import com.ebf.instant.data.db.dao.PostDao
 import com.ebf.instant.data.db.dao.UserDao
-import com.ebf.instant.model.*
+import com.ebf.instant.data2.network.post.FirestorePostDataSource
+import com.ebf.instant.data2.network.post.FunctionsPostDataSource
+import com.ebf.instant.data2.network.post.StoragePostDataSource
+import com.ebf.instant.model.Comment
+import com.ebf.instant.model.Like
+import com.ebf.instant.model.LikeWithUser
+import com.ebf.instant.model.Post
+import com.ebf.instant.model.PostWithData
+import com.ebf.instant.model.User
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
-import java.util.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import java.util.Date
 
 class PostRepository(
     private val postDataSource: FirestorePostDataSource,
@@ -69,7 +81,7 @@ class PostRepository(
         @Suppress("MoveVariableDeclarationIntoWhen")
         val likeFromDb = likeDao.getLike(userId = currentUser.id, postId = postId)
 
-        when(likeFromDb) {
+        when (likeFromDb) {
 
             null -> {
                 val likeWithUser = LikeWithUser(
@@ -100,5 +112,4 @@ class PostRepository(
         val url = storagePostDataSource.uploadImage(currentUserId, imageUri, setProgress)
         functionsPostDataSource.createPost(url)
     }
-
 }

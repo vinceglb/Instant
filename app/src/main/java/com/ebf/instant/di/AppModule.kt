@@ -4,20 +4,17 @@ import com.ebf.instant.data.AuthRepository
 import com.ebf.instant.data.comment.CommentRepository
 import com.ebf.instant.data.comment.FunctionsCommentDataSource
 import com.ebf.instant.data.db.AppDatabase
-import com.ebf.instant.data.post.FirestorePostDataSource
-import com.ebf.instant.data.post.FunctionsPostDataSource
-import com.ebf.instant.data.post.PostRepository
-import com.ebf.instant.data.post.StoragePostDataSource
-import com.ebf.instant.data.prefs.DataStorePreferencesStorage
-import com.ebf.instant.data.prefs.PreferencesStorage
-import com.ebf.instant.data.prefs.dataStore
 import com.ebf.instant.data.signin.datasources.AuthStateUserDataSource
 import com.ebf.instant.data.signin.datasources.FirebaseAuthStateUserDataSource
 import com.ebf.instant.data.signin.datasources.FirestoreRegisteredUserDataSource
 import com.ebf.instant.data.signin.datasources.RegisteredUserDataSource
 import com.ebf.instant.data.user.FirestoreUserDataSource
-import com.ebf.instant.data.user.FunctionsUserDataSource
-import com.ebf.instant.data.user.UserRepository
+import com.ebf.instant.data2.network.post.FirestorePostDataSource
+import com.ebf.instant.data2.network.post.FunctionsPostDataSource
+import com.ebf.instant.data2.network.post.StoragePostDataSource
+import com.ebf.instant.data2.network.user.FunctionsUserDataSource
+import com.ebf.instant.data2.repository.PostRepository
+import com.ebf.instant.data2.repository.UserRepository
 import com.ebf.instant.domain.auth.ObserveUserAuthStateUseCase
 import com.ebf.instant.fcm.FcmTokenUpdater
 import com.ebf.instant.ui.InstantAppViewModel
@@ -67,10 +64,6 @@ val appModule = module {
     factory { get<AppDatabase>().userDao() }
     factory { get<AppDatabase>().commentDao() }
     factory { get<AppDatabase>().likeDao() }
-
-    // Preferences DataStore
-    factory { androidContext().dataStore }
-    single<PreferencesStorage> { DataStorePreferencesStorage(get()) }
 
     // Scope
     single { CoroutineScope(SupervisorJob() + Dispatchers.Default) }

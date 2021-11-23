@@ -1,4 +1,4 @@
-package com.ebf.instant.data.post
+package com.ebf.instant.data2.network.post
 
 import android.net.Uri
 import com.google.firebase.storage.FirebaseStorage
@@ -9,7 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import java.util.*
+import java.util.UUID
 
 class StoragePostDataSource(
     private val storage: FirebaseStorage,
