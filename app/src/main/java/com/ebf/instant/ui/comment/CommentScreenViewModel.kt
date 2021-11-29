@@ -2,7 +2,7 @@ package com.ebf.instant.ui.comment
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ebf.instant.data.comment.CommentRepository
+import com.ebf.instant.data.repository.CommentRepository
 import com.ebf.instant.model.CommentWithUser
 import com.ebf.instant.ui.signin.SignInViewModelDelegate
 import kotlinx.coroutines.CoroutineScope
