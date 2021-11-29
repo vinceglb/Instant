@@ -1,22 +1,21 @@
 package com.ebf.instant.di
 
-import com.ebf.instant.data.AuthRepository
-import com.ebf.instant.data.comment.CommentRepository
-import com.ebf.instant.data.comment.FunctionsCommentDataSource
-import com.ebf.instant.data.db.AppDatabase
-import com.ebf.instant.data.signin.datasources.AuthStateUserDataSource
-import com.ebf.instant.data.signin.datasources.FirebaseAuthStateUserDataSource
-import com.ebf.instant.data.signin.datasources.FirestoreRegisteredUserDataSource
-import com.ebf.instant.data.signin.datasources.RegisteredUserDataSource
-import com.ebf.instant.data.user.FirestoreUserDataSource
-import com.ebf.instant.data2.network.post.FirestorePostDataSource
-import com.ebf.instant.data2.network.post.FunctionsPostDataSource
-import com.ebf.instant.data2.network.post.StoragePostDataSource
-import com.ebf.instant.data2.network.user.FunctionsUserDataSource
-import com.ebf.instant.data2.repository.PostRepository
-import com.ebf.instant.data2.repository.UserRepository
-import com.ebf.instant.domain.auth.ObserveUserAuthStateUseCase
-import com.ebf.instant.fcm.FcmTokenUpdater
+import com.ebf.instant.data.database.AppDatabase
+import com.ebf.instant.data.network.auth.ObserveUserAuthStateUseCase
+import com.ebf.instant.data.network.auth.datasources.AuthStateUserDataSource
+import com.ebf.instant.data.network.auth.datasources.FirebaseAuthStateUserDataSource
+import com.ebf.instant.data.network.auth.datasources.FirestoreRegisteredUserDataSource
+import com.ebf.instant.data.network.auth.datasources.RegisteredUserDataSource
+import com.ebf.instant.data.network.comment.FunctionsCommentDataSource
+import com.ebf.instant.data.network.fcm.FcmTokenUpdater
+import com.ebf.instant.data.network.post.FirestorePostDataSource
+import com.ebf.instant.data.network.post.FunctionsPostDataSource
+import com.ebf.instant.data.network.post.StoragePostDataSource
+import com.ebf.instant.data.network.user.FunctionsUserDataSource
+import com.ebf.instant.data.repository.AuthRepository
+import com.ebf.instant.data.repository.CommentRepository
+import com.ebf.instant.data.repository.PostRepository
+import com.ebf.instant.data.repository.UserRepository
 import com.ebf.instant.ui.InstantAppViewModel
 import com.ebf.instant.ui.camera.CameraScreenViewModel
 import com.ebf.instant.ui.comment.CommentScreenViewModel
@@ -45,7 +44,6 @@ val appModule = module {
     single { Firebase.functions("europe-west1") }
 
     // Data sources
-    single { FirestoreUserDataSource(get()) }
     single { FirestorePostDataSource(get()) }
     single { FunctionsPostDataSource(get()) }
     single { FunctionsUserDataSource(get()) }
@@ -54,7 +52,7 @@ val appModule = module {
 
     // Repositories
     single { UserRepository(get(), get()) }
-    single { AuthRepository(get()) }
+    single { AuthRepository(get(), get()) }
     single { PostRepository(get(), get(), get(), get(), get(), get(), get()) }
     single { CommentRepository(get(), get()) }
 

@@ -1,11 +1,16 @@
 package com.ebf.instant.ui.signin
 
-import com.ebf.instant.data.signin.AuthenticatedUserInfo
-import com.ebf.instant.domain.auth.ObserveUserAuthStateUseCase
+import com.ebf.instant.data.network.auth.AuthenticatedUserInfo
+import com.ebf.instant.data.repository.AuthRepository
 import com.ebf.instant.model.User
 import com.ebf.instant.util.WhileViewSubscribed
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.stateIn
 import timber.log.Timber
 
 interface SignInViewModelDelegate {
@@ -32,12 +37,12 @@ interface SignInViewModelDelegate {
  * Implementation of SignInViewModelDelegate that uses Firebase's auth mechanisms.
  */
 internal class FirebaseSignInViewModelDelegate(
-    observeUserAuthStateUseCase: ObserveUserAuthStateUseCase,
+    authRepository: AuthRepository,
     applicationScope: CoroutineScope
 ) : SignInViewModelDelegate {
 
     private val currentFirebaseUser: Flow<Result<AuthenticatedUserInfo>> =
-        observeUserAuthStateUseCase().map {
+        authRepository.authStateChanges().map {
             Timber.d(it.toString())
             if (it.isFailure) {
                 Timber.e(it.exceptionOrNull())

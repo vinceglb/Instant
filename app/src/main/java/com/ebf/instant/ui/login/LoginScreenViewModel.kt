@@ -2,7 +2,7 @@ package com.ebf.instant.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ebf.instant.data.AuthRepository
+import com.ebf.instant.data.repository.AuthRepository
 import kotlinx.coroutines.launch
 
 class LoginScreenViewModel(

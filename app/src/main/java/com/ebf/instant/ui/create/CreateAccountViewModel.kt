@@ -3,7 +3,7 @@ package com.ebf.instant.ui.create
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ebf.instant.data2.repository.UserRepository
+import com.ebf.instant.data.repository.UserRepository
 import com.ebf.instant.ui.camera.EMPTY_IMAGE_URI
 import com.ebf.instant.ui.signin.SignInViewModelDelegate
 import kotlinx.coroutines.CoroutineScope
