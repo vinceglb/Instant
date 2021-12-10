@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.ebf.instant">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-feature android:name="android.hardware.camera" />
 
@@ -11,7 +10,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".App"
+        android:name="com.ebf.instant.App"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher_dev"
         android:label="@string/app_name"
@@ -22,9 +21,8 @@
         tools:targetApi="n">
 
         <activity
-            android:name=".ui.MainActivity"
+            android:name="com.ebf.instant.ui.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.Instant.Starting"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>

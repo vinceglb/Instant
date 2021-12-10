@@ -2,6 +2,7 @@ package com.ebf.instant.data.network.auth
 
 import android.net.Uri
 import com.ebf.instant.ui.signin.Ok
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserInfo
 
 /**
@@ -17,6 +18,27 @@ interface AuthenticatedUserInfo : AuthenticatedUserInfoBasic, AuthenticatedUserI
         else -> Ok.NOT_CONNECTED
     }
 
+}
+
+interface AuthenticatedUserInfoBasic2 {
+    val uid: String?
+    val email: String?
+    val isSignedIn: Boolean
+}
+
+interface AuthenticatedUserInfoRegistered2 {
+    val uid: String
+    val name: String
+    val username: String
+    val photoUrl: String
+}
+
+class FirebaseUserInfo2(
+    firebaseUser: FirebaseUser?
+) : AuthenticatedUserInfoBasic2 {
+    override val uid: String? = firebaseUser?.uid
+    override val email: String? = firebaseUser?.email
+    override val isSignedIn: Boolean = firebaseUser != null
 }
 
 /**
