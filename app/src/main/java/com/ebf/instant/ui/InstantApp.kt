@@ -56,7 +56,9 @@ fun InstantGraph(navController: NavHostController = rememberNavController()) {
             )
         }
         composable("camera") {
-            CameraScreen()
+            CameraScreen(onPostUploaded = {
+                navController.navigate("home")
+            })
         }
         composable("post/{postId}/comments") { backStackEntry ->
             val postId = backStackEntry.arguments?.getString("postId")!!
