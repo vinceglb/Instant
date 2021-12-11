@@ -1,5 +1,6 @@
 package com.ebf.instant.ui.comment
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,8 +31,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -73,7 +76,6 @@ fun CommentScreen(
             }
         )
     }
-
 }
 
 @Composable
@@ -122,6 +124,7 @@ fun UserInput(
     }
 
     Divider()
+
     Surface(modifier = Modifier.height(48.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(modifier = Modifier.weight(1f)) {
@@ -136,6 +139,8 @@ fun UserInput(
                     keyboardActions = KeyboardActions(
                         onSend = { onSend() }
                     ),
+                    textStyle = TextStyle.Default.copy(color = MaterialTheme.colors.onSurface),
+                    cursorBrush = SolidColor(MaterialTheme.colors.onSurface),
                     modifier = Modifier
                         .padding(start = 16.dp)
                         .fillMaxWidth()
@@ -165,6 +170,15 @@ fun UserInput(
             }
         }
 
+    }
+}
+
+@Preview(name = "User input light")
+@Preview(name = "User input dark", uiMode = UI_MODE_NIGHT_YES)
+@Composable
+fun UserInputPreview() {
+    InstantTheme {
+        UserInput(onMessageSend = {})
     }
 }
 
