@@ -12,8 +12,8 @@ android {
         applicationId "com.ebfstudio.instant"
         minSdk 21
         targetSdk 31
-        versionCode 4
-        versionName "0.4.1"
+        versionCode 5
+        versionName "0.5.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
