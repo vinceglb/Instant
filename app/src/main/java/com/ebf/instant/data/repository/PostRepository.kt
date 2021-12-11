@@ -108,8 +108,14 @@ class PostRepository(
         }
     }
 
-    suspend fun createPost(currentUserId: String, imageUri: Uri, setProgress: (Float) -> Unit) {
+    suspend fun createPost(
+        currentUserId: String,
+        imageUri: Uri,
+        onPostUploaded: () -> Unit,
+        setProgress: (Float) -> Unit
+    ) {
         val url = storagePostDataSource.uploadImage(currentUserId, imageUri, setProgress)
         functionsPostDataSource.createPost(url)
+        onPostUploaded()
     }
 }

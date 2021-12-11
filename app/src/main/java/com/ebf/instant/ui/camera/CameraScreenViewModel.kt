@@ -12,9 +12,18 @@ class CameraScreenViewModel(
     private val postRepository: PostRepository,
 ) : ViewModel(), SignInViewModelDelegate by delegate {
 
-    fun createPost(imageUri: Uri, setProgress: (Float) -> Unit) = viewModelScope.launch {
+    fun createPost(
+        imageUri: Uri,
+        onPostUploaded: () -> Unit,
+        setProgress: (Float) -> Unit
+    ) = viewModelScope.launch {
         userIdValue?.let {
-            postRepository.createPost(currentUserId = it, imageUri = imageUri, setProgress = setProgress)
+            postRepository.createPost(
+                currentUserId = it,
+                imageUri = imageUri,
+                onPostUploaded = onPostUploaded,
+                setProgress = setProgress,
+            )
         }
     }
 

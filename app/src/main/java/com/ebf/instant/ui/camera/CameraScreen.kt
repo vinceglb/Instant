@@ -10,7 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -40,11 +44,10 @@ fun CameraScreen(
                 LinearProgressIndicator(progress = progress)
 
                 Button(onClick = {
-                    publishPost(
-                        viewModel = viewModel,
+                    viewModel.createPost(
                         imageUri = imageUri,
-                        onPostUploaded = onPostUploaded,
-                        setProgress = { progressState = it }
+                        setProgress = { progressState = it },
+                        onPostUploaded = onPostUploaded
                     )
                 }) {
                     Text(text = "Upload 🚀")
@@ -86,46 +89,6 @@ fun CameraScreen(
             }
         }
     }
-}
-
-fun publishPost(
-    viewModel: CameraScreenViewModel,
-    imageUri: Uri,
-    onPostUploaded: () -> Unit,
-    setProgress: (Float) -> Unit
-) {
-    viewModel.createPost(imageUri = imageUri, setProgress = setProgress)
-    onPostUploaded()
-//    // Upload post image to Firebase Storage
-//    val uploadState = viewModel.uploadImage(imageUri)
-//
-//    // Display progress
-//    uploadState.task.addOnProgressListener { (bytesTransferred, totalByteCount) ->
-//        setProgress((bytesTransferred * 1f) / totalByteCount)
-//    }
-//
-//    // Get image url
-//    uploadState.task.continueWithTask { task ->
-//        if (!task.isSuccessful) {
-//            task.exception?.let {
-//                throw it
-//            }
-//        }
-//        uploadState.reference.downloadUrl
-//    }.addOnCompleteListener { task ->
-//        if (task.isSuccessful) {
-//            // The image url
-//            val downloadUri = task.result
-//
-//            // Publish
-//            viewModel.publishPost(downloadUri.toString()) {
-//                onPostUploaded()
-//            }
-//        } else {
-//            // Handle failures TODO
-//            Log.e("CameraScreen", "Error", task.exception)
-//        }
-//    }
 }
 
 val EMPTY_IMAGE_URI: Uri = Uri.parse("file://dev/null")
