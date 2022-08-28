@@ -37,59 +37,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
-
-//@Composable
-//fun FeedScreen(
-//    vm: InstantAppViewModel = getViewModel(),
-//    navigateToAccount: (String) -> Unit
-//) {
-//    val auth: FirebaseAuth = get()
-//    val user by vm.userInfo.collectAsState()
-//
-//    Column {
-//        Text(text = "Feed")
-//
-//        val isSignedIn = user?.isSignedIn()
-//        if (isSignedIn == null) {
-//            CircularProgressIndicator()
-//        } else {
-//            Text(text = isSignedIn.toString())
-//            SignOutButton {
-//                auth.signOut()
-//            }
-//            Button(onClick = { navigateToAccount(user?.getUid() ?: "") }) {
-//                Text(text = "Go to Account ${user?.getUid()}")
-//            }
-//        }
-//    }
-//}
-//
-//@Composable
-//fun AccountScreen(userId: String, navigateToFeed: () -> Unit) {
-//    Column {
-//        Text(text = userId)
-//        Button(onClick = navigateToFeed) {
-//            Text(text = "Go To Feed")
-//        }
-//    }
-//}
-
-//@Composable
-//fun LoginScreen(vm: InstantAppViewModel = getViewModel()) {
-//    val googleLoginLauncher = rememberLauncherForActivityResult(LoginWithGoogle()) { token ->
-//        token?.let { vm.connectWithGoogle(it) }
-//    }
-//
-//    Column {
-//        Text(text = "LoginScreen")
-//
-//        ConnectWithGoogleButton {
-//            googleLoginLauncher.launch()
-//        }
-//    }
-//}
-
 @Composable
 fun ConnectWithGoogleButton(onClick: () -> Unit) {
     Button(onClick = { onClick() }) {
