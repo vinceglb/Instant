@@ -7,8 +7,8 @@
 <br />
 
 <p align="center">
-    <a href = "https://developer.android.com/jetpack/androidx/versions/all-channel#december_16_2020">
-      <img src = "https://img.shields.io/badge/Jetpack%20Compose-1.0.5-brightgreen" />
+    <a href = "https://developer.android.com/jetpack/androidx/versions/all-channel">
+      <img src = "https://img.shields.io/badge/Jetpack%20Compose-1.3.0-rc01-brightgreen" />
     </a>
     <a href = "https://img.shields.io/badge/Kotlin-100%25-blueviolet">
       <img src = "https://img.shields.io/badge/Kotlin-100%25-blueviolet" />
