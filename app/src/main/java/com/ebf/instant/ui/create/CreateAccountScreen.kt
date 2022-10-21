@@ -1,7 +1,6 @@
 package com.ebf.instant.ui.create
 
 import android.net.Uri
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -17,7 +16,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
+import coil.compose.AsyncImage
 import com.ebf.instant.ui.camera.EMPTY_IMAGE_URI
 import com.ebf.instant.ui.camera.GallerySelect
 import com.ebf.instant.ui.theme.InstantTheme
@@ -136,8 +135,8 @@ fun ProfileImageChooser(imageUri: Uri, setImageUri: (Uri) -> Unit) {
                     modifier = Modifier.size(40.dp)
                 )
             } else {
-                Image(
-                    painter = rememberImagePainter(imageUri),
+                AsyncImage(
+                    model = imageUri,
                     contentDescription = "Account image",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()

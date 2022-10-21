@@ -1,7 +1,10 @@
 package com.ebf.instant.ui.feed
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -12,12 +15,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
+import coil.compose.AsyncImage
 import com.ebf.instant.model.Like
 import com.ebf.instant.model.LikeWithUser
 import com.ebf.instant.model.User
 import com.ebf.instant.ui.theme.InstantTheme
-import java.util.*
+import java.util.Date
 
 @Composable
 fun ProfilesLikes(likes: List<LikeWithUser>) {
@@ -43,8 +46,8 @@ fun ProfileLikeIcon(
             modifier = Modifier.size(28.dp),
             content = {}
         )
-        Image(
-            painter = rememberImagePainter(data = profileImageUrl, ),
+        AsyncImage(
+            model = profileImageUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier

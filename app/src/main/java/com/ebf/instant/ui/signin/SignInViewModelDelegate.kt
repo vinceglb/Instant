@@ -5,6 +5,7 @@ import com.ebf.instant.data.repository.AuthRepository
 import com.ebf.instant.model.User
 import com.ebf.instant.util.WhileViewSubscribed
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -60,6 +61,7 @@ internal class FirebaseSignInViewModelDelegate(
             .map { it?.getState() ?: Ok.LOADING }
             .stateIn(applicationScope, SharingStarted.Eagerly, Ok.LOADING)
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override val userId: StateFlow<String?> =
         userInfo
             .mapLatest { it?.getUid() }

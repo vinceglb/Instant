@@ -2,7 +2,6 @@ package com.ebf.instant.ui.camera
 
 import android.net.Uri
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,7 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import coil.compose.rememberImagePainter
+import coil.compose.AsyncImage
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -31,9 +30,9 @@ fun CameraScreen(
     var imageUri by remember { mutableStateOf(EMPTY_IMAGE_URI) }
     if (imageUri != EMPTY_IMAGE_URI) {
         Box(modifier = modifier) {
-            Image(
+            AsyncImage(
+                model = imageUri,
                 modifier = Modifier.fillMaxSize(),
-                painter = rememberImagePainter(imageUri),
                 contentDescription = "Captured image"
             )
             Column(modifier = Modifier.align(Alignment.BottomCenter)) {

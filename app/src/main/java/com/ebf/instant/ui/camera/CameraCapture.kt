@@ -11,10 +11,22 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY
 import androidx.camera.core.Preview
 import androidx.camera.core.UseCase
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -26,6 +38,7 @@ import com.ebf.instant.util.getCameraProvider
 import com.ebf.instant.util.takePicture
 import id.zelory.compressor.Compressor
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.io.File
 
 @Composable
@@ -81,6 +94,7 @@ fun CameraCapture(
                         .padding(16.dp)
                         .align(Alignment.BottomCenter),
                     onClick = {
+                        Timber.d("Taking picture")
                         coroutineScope.launch {
                             imageCaptureUseCase.takePicture(context.executor).let {
                                 val compressedImageFile = Compressor.compress(context = context, imageFile = it)
